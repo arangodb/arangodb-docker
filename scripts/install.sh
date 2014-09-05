@@ -2,7 +2,7 @@
 
 # add arangodb source
 ARANGO_URL=http://www.arangodb.org/repositories/arangodb2/xUbuntu_14.04
-VERSION=2.2.2
+VERSION=`cat /scripts/VERSION`
 
 # check for local (non-network) install
 local=no
@@ -14,6 +14,7 @@ fi
 # install from local source
 if test "$local" = "yes";  then
 
+  echo " ---> Using local ubuntu packages"
   apt-key add - < /install/Release.key
   dpkg -i /install/libicu52_52.1-3_amd64.deb
   dpkg -i /install/arangodb_2.2.2_amd64.deb
@@ -25,6 +26,7 @@ else
   echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
   # install system deps
+  echo " ---> Updating ubuntu"
   apt-get -y -qq --force-yes update || exit 1
   apt-get -y -qq --force-yes install wget || exit 1
 
@@ -35,10 +37,12 @@ else
   rm Release.key
 
   # install arangodb
+  echo " ---> Installing arangodb package"
   apt-get -y -qq --force-yes update || exit 1
   apt-get -y -qq --force-yes install arangodb=$VERSION || exit 1
 
   # cleanup
+  echo " ---> Cleaning up"
   apt-get -y -qq --force-yes clean
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
