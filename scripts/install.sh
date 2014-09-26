@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # add arangodb source
-ARANGO_URL=http://www.arangodb.org/repositories/arangodb2/xUbuntu_14.04
+ARANGO_URL=https://www.arangodb.org/repositories/arangodb2/Debian_7.0
 VERSION=`cat /scripts/VERSION`
 
 # check for local (non-network) install
@@ -14,10 +14,10 @@ fi
 # install from local source
 if test "$local" = "yes";  then
 
-  echo " ---> Using local ubuntu packages"
+  echo " ---> Using local packages"
   apt-key add - < /install/Release.key
   dpkg -i /install/libicu52_52.1-3_amd64.deb
-  dpkg -i /install/arangodb_2.2.2_amd64.deb
+  dpkg -i /install/arangodb_2.2.3_amd64.deb
 
 # normal install
 else
@@ -26,9 +26,9 @@ else
   echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
   # install system deps
-  echo " ---> Updating ubuntu"
+  echo " ---> Updating debian"
   apt-get -y -qq --force-yes update || exit 1
-  apt-get -y -qq --force-yes install wget || exit 1
+  apt-get -y -qq --force-yes install wget ca-certificates apt-transport-https || exit 1
 
   # install arangodb key
   echo "deb $ARANGO_URL/ /" >> /etc/apt/sources.list.d/arangodb.list
