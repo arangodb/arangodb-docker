@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM debian:wheezy
 MAINTAINER Frank Celler <info@arangodb.org>
 
 # for local installation, uncomment
@@ -6,6 +6,7 @@ MAINTAINER Frank Celler <info@arangodb.org>
 
 # add scripts to install and run ArangoDB
 ADD ./scripts /scripts
+RUN chmod +x /scripts/*.sh
 
 # add HELP file
 ADD ./HELP.md /HELP.md
