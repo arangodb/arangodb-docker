@@ -29,6 +29,9 @@ ArangoDB use a database directory `/data` to store the data and an apps director
 
 See `docker run -e help=1 arangodb` for all volumes.
 
+A good explanation about persistence and docker container can be found here:
+[Docker Indepth Volumes](http://container42.com/2014/11/03/docker-indepth-volumes/)
+
 ## Using host directories
 
 You can map the container's volumes to a directory on the host, so that the data
