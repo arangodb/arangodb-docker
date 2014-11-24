@@ -1,41 +1,56 @@
-# ArangoDB Docker
+# ArangoDB
 
-This Dockerfile will produce an image for ArangoDB.
+A distributed open-source database with a flexible data model for documents,
+graphs, and key-values. Build high performance applications using a convenient
+sql-like query language or JavaScript extensions.
+
+
 
 ## Usage
 
-### Building an image
+### Start a ArangoDB instance
 
-Simple clone the repository and execute the following command in the
-`arangodb-docker` folder
+In order to start an ArangoDB instance run
 
-    unix> docker build -t arangodb .
+    unix> docker run --name arangodb-instance -d arangodb/arangodb
 
-This will create a image named `arangodb`.
+By default ArangoDB listen on port 8529 for request and the image includes
+`EXPOST 8529`. If you link an application container, it is automatically
+available in the linked container. See the following examples.
 
-### Running the image
+### Using the instance
 
-After you have created an image, you can run ArangoDB as follows
+In order to use the running instance from an application, link the container
 
-    unix> docker run -p 8529:8529 -d arangodb
+    unix> docker run --name my-app --link arangodb-instance
 
-ArangoDB listen on port 8529 for request. The `-p 8529:8529` exposes this port 
-on the host.
+### Running the image with 
 
-# Data
+In order to start an ArangoDB instance run
 
-ArangoDB use a database directory `/data` to store the data and an apps directory
-`/apps` to store any extensions. These directory are marked as docker volumes.
+    unix> docker run -p 8529:8529 -d arangodb/arangodb
+
+ArangoDB listen on port 8529 for request and the image includes `EXPOST
+8529`. The `-p 8529:8529` exposes this port on the host.
+
+### Command line options
+
+In order to get a list of supported options, run
+
+    unix> docker run -e help=1 arangodb/arangodb
+
+## Persistent Data
+
+ArangoDB use the volume `/data` as database directory to store the collection
+data and the volume `/apps` as apps directory to store any extensions. These
+directory are marked as docker volumes.
 
 See `docker run -e help=1 arangodb` for all volumes.
 
-A good explanation about persistence and docker container can be found here:
-[Docker In-depth: Volumes](http://container42.com/2014/11/03/docker-indepth-volumes/)
-
-## Using host directories
+### Using host directories
 
 You can map the container's volumes to a directory on the host, so that the data
-is keep between runs of the container.
+is kept between runs of the container.
 
     unix> docker run -p 8529:8529 -d \
               -v /tmp/arangodb:/data \
@@ -44,7 +59,7 @@ is keep between runs of the container.
 This will use the `/tmp/arangodb` directory of the host as database directory
 for ArangoDB inside the container.
 
-## Using a data container
+### Using a data container
 
 Alternatively you can create a container holding the data.
 
@@ -53,6 +68,17 @@ Alternatively you can create a container holding the data.
 And use this data container in your ArangoDB container.
 
     unix> docker run --volumes-from arangodb-persist -p 8529:8529 arangodb
+
+# Images
+
+## Building an image
+
+Simple clone the repository and execute the following command in the
+`arangodb-docker` folder
+
+    unix> docker build -t arangodb .
+
+This will create a image named `arangodb`.
 
 # LICENSE
 
