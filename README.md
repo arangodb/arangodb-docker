@@ -54,8 +54,10 @@ A good explanation about persistence and docker container can be found here:
 ### Using host directories
 
 You can map the container's volumes to a directory on the host, so that the data
-is kept between runs of the container.
+is kept between runs of the container. This path `/tmp/arangodb` is in general
+not the correct place to store you persistent files - it is just an example!
 
+    unix> mkdir /tmp/arangodb
     unix> docker run -p 8529:8529 -d \
               -v /tmp/arangodb:/data \
               arangodb
@@ -72,6 +74,14 @@ Alternatively you can create a container holding the data.
 And use this data container in your ArangoDB container.
 
     unix> docker run --volumes-from arangodb-persist -p 8529:8529 arangodb
+
+If want to save a few bytes for you can alternatively use 
+[tianon/true](https://registry.hub.docker.com/u/tianon/true/)
+or
+[progrium/busybox](https://registry.hub.docker.com/u/progrium/busybox/)
+for creating the volume only containers. For example
+
+    unix> docker run -d --name arangodb-persist -v /data tianon/true true
 
 # Images
 

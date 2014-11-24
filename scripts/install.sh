@@ -39,8 +39,11 @@ else
 
   # install arangodb
   echo " ---> Installing arangodb package"
+  cd /tmp
   apt-get -y -qq --force-yes update || exit 1
-  apt-get -y -qq --force-yes install arangodb=$VERSION || exit 1
+  apt-get -y -qq --force-yes download arangodb=${VERSION} || exit 1
+  dpkg --install arangodb_${VERSION}_amd64.deb || exit 1
+  rm arangodb_${VERSION}_amd64.deb
 
   # cleanup
   echo " ---> Cleaning up"
@@ -50,7 +53,5 @@ else
 fi
 
 # create data, apps and log directory
-mkdir /data /apps /apps-dev /logs
-touch /logs/arangodb.log
-
-chown arangodb:arangodb /data /apps /apps-dev /logs /logs/arangodb.log
+mkdir /data /apps /apps-dev /logs  || exit 1
+chown arangodb:arangodb /data /apps /apps-dev /logs || exit 1
