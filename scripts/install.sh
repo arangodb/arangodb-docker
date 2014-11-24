@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # add arangodb source
-ARANGO_URL=http://www.arangodb.org/repositories/arangodb2/xUbuntu_14.04
+ARANGO_URL=https://www.arangodb.com/repositories/arangodb2/xUbuntu_14.04
 VERSION=`cat /scripts/VERSION`
 
 # check for local (non-network) install
@@ -29,6 +29,7 @@ else
   echo " ---> Updating ubuntu"
   apt-get -y -qq --force-yes update || exit 1
   apt-get -y -qq --force-yes install wget || exit 1
+  apt-get -y -qq install apt-transport-https || exit 1
 
   # install arangodb key
   echo "deb $ARANGO_URL/ /" >> /etc/apt/sources.list.d/arangodb.list
