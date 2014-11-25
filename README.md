@@ -24,7 +24,7 @@ In order to use the running instance from an application, link the container
 
     unix> docker run --name my-app --link arangodb-instance
 
-### Running the image with 
+### Running the image
 
 In order to start an ArangoDB instance run
 
