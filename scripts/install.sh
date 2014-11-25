@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # add arangodb source
-ARANGO_URL=https://www.arangodb.com/repositories/arangodb2/xUbuntu_14.04
+ARANGO_REPO=unstable
+ARANGO_URL=https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04
 VERSION=`cat /scripts/VERSION`
 
 # check for local (non-network) install
