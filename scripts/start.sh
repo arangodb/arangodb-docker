@@ -13,15 +13,20 @@ fi
 echo
 echo "starting ArangoDB in stand-alone mode"
 
-# pipe logfile to standard out
-if test "$verbose" = "1";  then
-  tail -f /logs/arangodb.log &
-fi
-
 # start in development mode
 if test "$development" = "1";  then
   D1="--javascript.dev-app-path"
   D2="/apps-dev"
+fi
+
+# fix permissions
+touch /logs/arangodb.log
+
+chown arangodb:arangodb /data /apps /apps-dev /logs /logs/arangodb.log
+
+# pipe logfile to standard out
+if test "$verbose" = "1";  then
+  tail -f /logs/arangodb.log &
 fi
 
 # start server

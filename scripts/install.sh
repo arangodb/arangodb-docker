@@ -17,7 +17,7 @@ if test "$local" = "yes";  then
   echo " ---> Using local packages"
   apt-key add - < /install/Release.key
   dpkg -i /install/libicu52_52.1-3_amd64.deb
-  dpkg -i /install/arangodb_2.2.3_amd64.deb
+  dpkg -i /install/arangodb_${VERSION}_amd64.deb
 
 # normal install
 else
@@ -28,7 +28,8 @@ else
   # install system deps
   echo " ---> Updating debian"
   apt-get -y -qq --force-yes update || exit 1
-  apt-get -y -qq --force-yes install wget ca-certificates apt-transport-https || exit 1
+  apt-get -y -qq --force-yes install wget || exit 1
+  apt-get -y -qq install apt-transport-https || exit 1
 
   # install arangodb key
   echo "deb $ARANGO_URL/ /" >> /etc/apt/sources.list.d/arangodb.list
@@ -38,8 +39,11 @@ else
 
   # install arangodb
   echo " ---> Installing arangodb package"
+  cd /tmp
   apt-get -y -qq --force-yes update || exit 1
-  apt-get -y -qq --force-yes install arangodb=$VERSION || exit 1
+  apt-get -y -qq --force-yes download arangodb=${VERSION} || exit 1
+  dpkg --install arangodb_${VERSION}_amd64.deb || exit 1
+  rm arangodb_${VERSION}_amd64.deb
 
   # cleanup
   echo " ---> Cleaning up"
@@ -49,7 +53,5 @@ else
 fi
 
 # create data, apps and log directory
-mkdir /data /apps /apps-dev /logs
-touch /logs/arangodb.log
-
-chown arangodb:arangodb /data /apps /apps-dev /logs /logs/arangodb.log
+mkdir /data /apps /apps-dev /logs  || exit 1
+chown arangodb:arangodb /data /apps /apps-dev /logs || exit 1
