@@ -17,7 +17,7 @@ if test "$local" = "yes";  then
   echo " ---> Using local ubuntu packages"
   apt-key add - < /install/Release.key
   dpkg -i /install/libicu52_52.1-3_amd64.deb
-  dpkg -i /install/arangodb_2.2.2_amd64.deb
+  dpkg -i /install/arangodb_${VERSION}_amd64.deb
 
 # normal install
 else
