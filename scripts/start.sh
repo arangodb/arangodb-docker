@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # help
 if test "$help" = "1";  then
