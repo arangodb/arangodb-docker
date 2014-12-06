@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # add arangodb source
 ARANGO_URL=https://www.arangodb.org/repositories/arangodb2/Debian_7.0
@@ -27,22 +28,22 @@ else
 
   # install system deps
   echo " ---> Updating debian"
-  apt-get -y -qq --force-yes update || exit 1
-  apt-get -y -qq --force-yes install wget || exit 1
-  apt-get -y -qq install apt-transport-https || exit 1
+  apt-get -y -qq --force-yes update
+  apt-get -y -qq --force-yes install wget
+  apt-get -y -qq install apt-transport-https
 
   # install arangodb key
   echo "deb $ARANGO_URL/ /" >> /etc/apt/sources.list.d/arangodb.list
-  wget --quiet $ARANGO_URL/Release.key || exit 1
+  wget --quiet $ARANGO_URL/Release.key
   apt-key add - < Release.key
   rm Release.key
 
   # install arangodb
   echo " ---> Installing arangodb package"
   cd /tmp
-  apt-get -y -qq --force-yes update || exit 1
-  apt-get -y -qq --force-yes download arangodb=${VERSION} || exit 1
-  dpkg --install arangodb_${VERSION}_amd64.deb || exit 1
+  apt-get -y -qq --force-yes update
+  apt-get -y -qq --force-yes download arangodb=${VERSION}
+  dpkg --install arangodb_${VERSION}_amd64.deb
   rm arangodb_${VERSION}_amd64.deb
 
   # cleanup
@@ -53,5 +54,5 @@ else
 fi
 
 # create data, apps and log directory
-mkdir /data /apps /apps-dev /logs  || exit 1
-chown arangodb:arangodb /data /apps /apps-dev /logs || exit 1
+mkdir /data /apps /apps-dev /logs
+chown arangodb:arangodb /data /apps /apps-dev /logs
