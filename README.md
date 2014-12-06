@@ -24,9 +24,9 @@ In order to use the running instance from an application, link the container
 
     unix> docker run --name my-app --link arangodb-instance
 
-### Running the image
+### Exposing the port to the outside world
 
-In order to start an ArangoDB instance run
+If you want to expose the port to the outside world, run
 
     unix> docker run -p 8529:8529 -d arangodb/arangodb
 
