@@ -2,8 +2,21 @@
 set -e
 
 # add arangodb source
-ARANGO_URL=https://www.arangodb.com/repositories/arangodb2/xUbuntu_14.04
 VERSION=`cat /scripts/VERSION`
+
+case $VERSION in
+  *a*|*b*)
+    ARANGO_REPO=unstable
+    ;;
+
+  *)
+    ARANGO_REPO=arangodb2
+    ;;
+esac
+
+# set repostory path
+ARANGO_URL=https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04
+echo " ---> Using repository $ARANGO_URL and version $VERSION"
 
 # check for local (non-network) install
 local=no
