@@ -5,6 +5,10 @@ set -e
 VERSION=`cat /scripts/VERSION`
 
 case $VERSION in
+  latest)
+    ARANGO_REPO=arangodb2
+    ;;
+
   *a*|*b*)
     ARANGO_REPO=unstable
     ;;
@@ -44,18 +48,29 @@ else
   apt-get -y -qq --force-yes install wget
   apt-get -y -qq install apt-transport-https
 
-  # install arangodb key
-  echo "deb $ARANGO_URL/ /" >> /etc/apt/sources.list.d/arangodb.list
-  wget --quiet $ARANGO_URL/Release.key
-  apt-key add - < Release.key
-  rm Release.key
-
   # install arangodb
   echo " ---> Installing arangodb package"
   cd /tmp
-  wget "https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04/amd64/arangodb_${VERSION}_amd64.deb"
-  dpkg --install arangodb_${VERSION}_amd64.deb
-  rm arangodb_${VERSION}_amd64.deb
+
+  if [ "${VERSION}" == "latest" ];  then
+    echo " ---> Using repository $ARANGO_URL"
+
+    # install arangodb key
+    echo "deb $ARANGO_URL/ /" >> /etc/apt/sources.list.d/arangodb.list
+    wget --quiet $ARANGO_URL/Release.key
+    apt-key add - < Release.key
+    rm Release.key
+
+    # download package
+    apt-get -y -qq --force-yes update
+    apt-get -y -qq --force-yes download arangodb
+    dpkg --install arangodb_*_amd64.deb
+    rm arangodb_*_amd64.deb
+  else
+    wget "https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04/amd64/arangodb_${VERSION}_amd64.deb"
+    dpkg --install arangodb_${VERSION}_amd64.deb
+    rm arangodb_${VERSION}_amd64.deb
+  fi
 
   # cleanup
   echo " ---> Cleaning up"
