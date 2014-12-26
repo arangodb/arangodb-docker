@@ -53,7 +53,7 @@ else
   # install arangodb
   echo " ---> Installing arangodb package"
   cd /tmp
-  wget "https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04/amd64/arangodb_${VERSION}_amd64.deb
+  wget "https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04/amd64/arangodb_${VERSION}_amd64.deb"
   dpkg --install arangodb_${VERSION}_amd64.deb
   rm arangodb_${VERSION}_amd64.deb
 
