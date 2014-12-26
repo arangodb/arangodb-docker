@@ -30,7 +30,6 @@ if test "$local" = "yes";  then
 
   echo " ---> Using local ubuntu packages"
   apt-key add - < /install/Release.key
-  dpkg -i /install/libicu52_52.1-3_amd64.deb
   dpkg -i /install/arangodb_${VERSION}_amd64.deb
 
 # normal install
@@ -54,8 +53,7 @@ else
   # install arangodb
   echo " ---> Installing arangodb package"
   cd /tmp
-  apt-get -y -qq --force-yes update
-  apt-get -y -qq --force-yes download arangodb=${VERSION}
+  wget "https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04/amd64/arangodb_${VERSION}_amd64.deb"
   dpkg --install arangodb_${VERSION}_amd64.deb
   rm arangodb_${VERSION}_amd64.deb
 
