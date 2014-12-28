@@ -41,6 +41,7 @@ if test "$console" = "1";  then
         --javascript.app-path /apps \
         --log.file /logs/arangodb.log \
         --temp-path /tmp/arangodb \
+	--server.endpoint tcp://0.0.0.0:8529/ \
         $D1 $D2 \
         "$@" &
   /bin/bash
@@ -52,6 +53,7 @@ else
         --javascript.app-path /apps \
 	--log.file /logs/arangodb.log \
         --temp-path /tmp/arangodb \
+	--server.endpoint tcp://0.0.0.0:8529/ \
 	$D1 $D2 \
 	"$@"
 fi
