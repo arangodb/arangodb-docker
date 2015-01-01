@@ -22,11 +22,23 @@ available in the linked container. See the following examples.
 
 In order to use the running instance from an application, link the container
 
-    unix> docker run --name my-app --link arangodb-instance
+    unix> docker run --name my-app --link arangodb-instance:db-link arangodb/arangodb
+    
+This will use the instanced with the name `arangodb-instance` and link it into
+the application container. The application container will contain environment
+variables
 
-### Running the image
+    DB_LINK_PORT_8529_TCP=tcp://172.17.0.17:8529
+    DB_LINK_PORT_8529_TCP_ADDR=172.17.0.17
+    DB_LINK_PORT_8529_TCP_PORT=8529
+    DB_LINK_PORT_8529_TCP_PROTO=tcp
+    DB_LINK_NAME=/naughty_ardinghelli/db-link
 
-In order to start an ArangoDB instance run
+which can be used to access the database.
+
+### Exposing the port to the outside world
+
+If you want to expose the port to the outside world, run
 
     unix> docker run -p 8529:8529 -d arangodb/arangodb
 
