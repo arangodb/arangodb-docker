@@ -36,6 +36,8 @@ if test "$local" = "yes";  then
   apt-key add - < /install/Release.key
   dpkg -i /install/arangodb_${VERSION}_amd64.deb
 
+  rm -rf /install
+
 # normal install
 else
 
