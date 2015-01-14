@@ -29,6 +29,15 @@ if test -d /install; then
   local=yes
 fi
 
+# non interactive
+echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+# install system deps
+echo " ---> Updating debian"
+apt-get -y -qq --force-yes update
+apt-get -y -qq --force-yes install wget
+apt-get -y -qq install apt-transport-https
+
 # install from local source
 if test "$local" = "yes";  then
 
@@ -40,15 +49,6 @@ if test "$local" = "yes";  then
 
 # normal install
 else
-
-  # non interactive
-  echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-
-  # install system deps
-  echo " ---> Updating debian"
-  apt-get -y -qq --force-yes update
-  apt-get -y -qq --force-yes install wget
-  apt-get -y -qq install apt-transport-https
 
   # install arangodb
   echo " ---> Installing arangodb package"
