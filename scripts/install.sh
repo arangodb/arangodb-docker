@@ -19,7 +19,7 @@ case $VERSION in
 esac
 
 # set repostory path
-ARANGO_URL=https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04
+ARANGO_URL=https://www.arangodb.com/repositories/${ARANGO_REPO}/Debian_7.0
 echo " ---> Using repository $ARANGO_URL and version $VERSION"
 
 # check for local (non-network) install
@@ -33,7 +33,7 @@ fi
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # install system deps
-echo " ---> Updating ubuntu"
+echo " ---> Updating debian"
 apt-get -y -qq --force-yes update
 apt-get -y -qq --force-yes install wget
 apt-get -y -qq install apt-transport-https
@@ -41,7 +41,7 @@ apt-get -y -qq install apt-transport-https
 # install from local source
 if test "$local" = "yes";  then
 
-  echo " ---> Using local ubuntu packages"
+  echo " ---> Using local packages"
   apt-key add - < /install/Release.key
   dpkg -i /install/arangodb_${VERSION}_amd64.deb
 
@@ -69,7 +69,7 @@ else
     dpkg --install arangodb_*_amd64.deb
     rm arangodb_*_amd64.deb
   else
-    wget "https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04/amd64/arangodb_${VERSION}_amd64.deb"
+    wget "https://www.arangodb.com/repositories/${ARANGO_REPO}/Debian_7.0/amd64/arangodb_${VERSION}_amd64.deb"
     dpkg --install arangodb_${VERSION}_amd64.deb
     rm arangodb_${VERSION}_amd64.deb
   fi

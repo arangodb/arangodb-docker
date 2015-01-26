@@ -1,5 +1,5 @@
-FROM ubuntu:14.04
-MAINTAINER Frank Celler <info@arangodb.com>
+FROM debian:wheezy
+MAINTAINER Frank Celler <info@arangodb.org>
 
 # for local installation, uncomment
 # ADD ./arangodb /install
