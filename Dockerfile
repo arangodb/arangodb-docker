@@ -2,7 +2,7 @@ FROM debian:wheezy
 MAINTAINER Frank Celler <info@arangodb.org>
 
 # for local installation, uncomment
-# ADD ./arangodb /install
+ADD ./arangodb /install
 
 # add scripts to install and run ArangoDB
 ADD ./scripts /scripts
@@ -10,7 +10,10 @@ ADD ./scripts /scripts
 # add HELP file
 ADD ./HELP.md /HELP.md
 
-# install ubuntu package
+# update OS
+RUN ./scripts/prepare.sh
+
+# install package
 RUN ./scripts/install.sh
 
 # expose data, apps and logs

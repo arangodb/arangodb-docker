@@ -32,18 +32,40 @@ fi
 # non interactive
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-# install system deps
-echo " ---> Updating debian"
-apt-get -y -qq --force-yes update
-apt-get -y -qq --force-yes install wget
-apt-get -y -qq install apt-transport-https
-
 # install from local source
 if test "$local" = "yes";  then
 
-  echo " ---> Using local packages"
-  apt-key add - < /install/Release.key
-  dpkg -i /install/arangodb_${VERSION}_amd64.deb
+  if test -f "/install/arangodb_${VERSION}_amd64.deb";  then
+
+    echo " ---> Using local debian package"
+    apt-key add - < /install/Release.key
+    dpkg -i /install/arangodb_${VERSION}_amd64.deb
+
+  elif test -f "/install/arangodb-${VERSION}.tar.gz";  then
+
+    echo "deb http://http.debian.net/debian testing contrib main" >> /etc/apt/sources.list
+    # apt-get -y -qq install libc-dev-bin=2.19-13
+    apt-get -y -qq --force-yes update
+    apt-get -y -qq install libc6:amd64=2.19-13
+    apt-get -y -qq install libstdc++6:amd64=4.9.1-19
+
+    (
+      cd /
+      tar -x -z -f /install/arangodb-${VERSION}.tar.gz
+
+      getent group arangodb >/dev/null || groupadd -r arangodb 
+      getent passwd arangodb >/dev/null || useradd -r -g arangodb -d /usr/share/arangodb -s /bin/false -c "ArangoDB Application User" arangodb 
+
+      install -o arangodb -g arangodb -m 755 -d /var/lib/arangodb
+      install -o arangodb -g arangodb -m 755 -d /var/lib/arangodb-apps
+      install -o arangodb -g arangodb -m 755 -d /var/log/arangodb
+    )
+
+  else
+    echo "no suitable package found"
+    ls -l /install
+    exit 1
+  fi
 
   rm -rf /install
 

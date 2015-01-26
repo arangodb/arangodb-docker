@@ -1,5 +1,5 @@
 #!/bin/bash
 
-echo "starting agency on slave $HOST"
+echo " ---> starting agency on slave $HOST"
 
-env
+exec env
