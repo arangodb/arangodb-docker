@@ -19,8 +19,11 @@ RUN ./scripts/install.sh
 # expose data, apps and logs
 VOLUME ["/data", "/apps", "/apps-dev", "/logs"]
 
-# standard port
+# standard port for arangod
 EXPOSE 8529
+
+# standard port for etcd
+EXPOSE 4001
 
 # start script
 CMD ["/scripts/start.sh"]
