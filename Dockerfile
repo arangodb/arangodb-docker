@@ -1,5 +1,5 @@
 FROM ubuntu:14.04
-MAINTAINER Max Neunhoeffer <max@arangodb.com>
+MAINTAINER Frank Celler <info@arangodb.com>
 
 # for local installation, uncomment
 # ADD ./arangodb /install
