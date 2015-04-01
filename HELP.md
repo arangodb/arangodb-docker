@@ -10,7 +10,7 @@ start in development mode:
 pipe the log file to standard out:
   docker run -e verbose=1 arangodb
 
-fire up a bash after starting the serber:
+fire up a bash after starting the server:
   docker run -e console=1 -it arangodb
 
 show all options:
