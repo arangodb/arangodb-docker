@@ -1,14 +1,9 @@
-#Supported tags and respective `Dockerfile` links
-
-- [`2.4` (Dockerfile)](https://github.com/arangodb/arangodb-docker/blob/v2.4.0-alpha1/Dockerfile)
-- [`2.3.2` (Dockerfile)](https://github.com/arangodb/arangodb-docker/blob/v2.3.2/Dockerfile)
-- [`2.3.1` (Dockerfile)](https://github.com/arangodb/arangodb-docker/blob/v2.3.1/Dockerfile)
-- [`2.3.0` (Dockerfile)](https://github.com/arangodb/arangodb-docker/blob/v2.3.0/Dockerfile)
-
-# What is ArangoDB?
+# Overview / Links
 ArangoDB is a multi-model, open-source database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions. Use ACID transactions if you require them. Scale horizontally and vertically with a few mouse clicks.
 
-ArangoDB is Polyglot Persistence done right. The supported data models can be mixed in queries and allow ArangoDB to be the aggregation point for the data request you have in mind.
+The supported data models can be mixed in queries and allow ArangoDB to be the aggregation point for the data request you have in mind.
+
+Dockerfile: [`Latest` (Dockerfile)](https://github.com/arangodb/arangodb-docker/blob/master/Dockerfile)
 
 Key Features in ArangoDB
 ------------------------
@@ -22,20 +17,17 @@ Conveniently join what belongs together for flexible ad-hoc querying, less data 
 **Transactions**
 Easy application development keeping your data consistent and safe. No hassle in your client.
 
-Here is an AQL query that makes use of all those features:
-![AQL Query Example](https://www.arangodb.com/wp-content/uploads/2015/03/query_join.png)
-
 Joins and Transactions are key features for flexible, secure data designs, widely used in RDBMSs that you won’t want to miss in NoSQL products. You decide how and when to use Joins and strong consistency guarantees, keeping all the power for scaling and performance as choice. 
 
 Furthermore, ArangoDB offers a microservice framework called [Foxx](https://www.arangodb.com/foxx) to build your own Rest API with a few lines of code.
 
-Microservice Example
-![Microservice Example](https://www.arangodb.com/wp-content/uploads/2015/03/microservice.png)
-
+ArangoDB Documentation
+- [ArangoDB Documentation](https://www.arangodb.com/documentation)
+- [ArangoDB Tutorials](https://www.arangodb.com/tutorials)
 
 ## Usage
 
-### Start a ArangoDB instance
+### Start an ArangoDB instance
 
 In order to start an ArangoDB instance run
 
