@@ -32,12 +32,22 @@ ArangoDB Documentation
 In order to start an ArangoDB instance run
 
 ```
-unix> docker run --name arangodb-instance -d arangodb/arangodb
+unix> docker run -d --name arangodb-instance -d arangodb/arangodb
 ```
 
+Will create and launch the arangodb docker instance as background process.
+The Identifier of the process is printed.
 By default ArangoDB listen on port 8529 for request and the image includes
 `EXPOST 8529`. If you link an application container it is automatically
 available in the linked container. See the following examples.
+
+In order to get the IP arango listens on run:
+
+```
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' <IDENTIFIER>
+```
+
+(where <IDENTIFIER> is the return string of the previous start command)
 
 ### Using the instance
 
@@ -151,7 +161,7 @@ This will create an image named `arangodb`.
 
 If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/arangodb/arangodb-docker/issues).
 
-You can also reach many of the official image maintainers via the `#docker-library` IRC channel on [Freenode](https://freenode.net).
+You can also reach many of the official image maintainers via the `#docker-library` IRC channel on [Freenode](https://freenode.net) - ArangoDB specific questions can be asked in `#arangodb`. 
 
 ## Contributing
 
