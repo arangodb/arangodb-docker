@@ -14,12 +14,6 @@ fi
 echo
 echo "starting ArangoDB in stand-alone mode"
 
-# start in development mode
-if test "$development" = "1";  then
-  D1="--javascript.dev-app-path"
-  D2="/apps-dev"
-fi
-
 # fix permissions
 touch /logs/arangodb.log
 rm -rf /tmp/arangodb
@@ -35,25 +29,11 @@ fi
 # start server
 if test "$console" = "1";  then
   /usr/sbin/arangod \
-        --uid arangodb \
-        --gid arangodb \
-        --database.directory /data \
-        --javascript.app-path /apps \
-        --log.file /logs/arangodb.log \
-        --temp-path /tmp/arangodb \
-	--server.endpoint tcp://0.0.0.0:8529/ \
-        $D1 $D2 \
+        --configuration /etc/arangodb/arangod-docker.conf \
         "$@" &
   /bin/bash
 else
-  exec /usr/sbin/arangod \
-	--uid arangodb \
-	--gid arangodb \
-        --database.directory /data \
-        --javascript.app-path /apps \
-	--log.file /logs/arangodb.log \
-        --temp-path /tmp/arangodb \
-	--server.endpoint tcp://0.0.0.0:8529/ \
-	$D1 $D2 \
+  /usr/sbin/arangod \
+        --configuration /etc/arangodb/arangod-docker.conf \
 	"$@"
 fi
