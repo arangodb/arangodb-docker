@@ -1,4 +1,4 @@
-FROM debian:wheezy
+FROM debian:jessie
 MAINTAINER Frank Celler <info@arangodb.com>
 
 # for local installation, uncomment
