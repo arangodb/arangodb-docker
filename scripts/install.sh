@@ -37,6 +37,7 @@ echo " ---> Updating debian"
 apt-get -y -qq --force-yes update
 apt-get -y -qq --force-yes install wget
 apt-get -y -qq install apt-transport-https
+apt-get -y -qq install pwgen
 
 # install from local source
 if test "$local" = "yes";  then
@@ -81,7 +82,36 @@ else
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 fi
-cp /scripts/arangod-docker.conf /etc/arangodb
+
+# fix config files
+echo " ---> Fixing config files"
+
+(
+  cd /etc/arangodb
+
+  echo 'temp-path = /tmp/arangodb' > arangod.conf.new
+  sed -e 's~^directory.*~\n'"$msg"'\ndirectory = /data\n~' \
+    -e 's~^app-path.*~\n'"$msg"'\napp-path = /apps\n~' \
+    -e 's~^file.*~\n'"$msg"'\nfile = /logs/arangodb.log\n~' \
+    -e 's~^data-path.*~data-path = /lib/cluster~' \
+    -e 's~^log-path.*~log-path = /logs/cluster~' \
+    -e 's~^agent-path.*~agent-path = /usr/bin/arangodb/etcd-arango~' \
+    -e 's~^arangod-path.*~arangod-path = /usr/sbin/arangod~' \
+    -e 's~^dbserver-config.*~dbserver-config = /etc/arangodb/arangod.conf~' \
+    -e 's~^coordinator-config.*~coordinator-config = /etc/arangodb/arangod.conf~' \
+    -e 's~^endpoint.*~endpoint = tcp://0.0.0.0:8529~'\
+    -e 's~^# uid~uid~' \
+    -e 's~^# gid~gid~' < arangod.conf >> arangod.conf.new
+  mv arangod.conf.new arangod.conf
+
+  for i in *.conf; do
+    sed -e 's~^disable-authentication.*~disable-authentication = no~' < $i > $i.new
+    mv $i.new $i
+  done
+)
+
 # create data, apps and log directory
+echo " ---> Setting up exported directories"
+
 mkdir /data /apps /apps-dev /logs
 chown arangodb:arangodb /data /apps /apps-dev /logs
