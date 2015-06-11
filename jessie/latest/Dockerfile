@@ -1,9 +1,8 @@
 FROM debian:jessie
 MAINTAINER Frank Celler <info@arangodb.com>
 
-
-RUN apt-get -y --force-yes update && \
-    apt-get -y --force-yes install \
+RUN apt-get update && \
+    apt-get install -y \
         apt-transport-https \
         gnupg \
     && \
@@ -21,17 +20,18 @@ ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
 RUN echo "deb $ARANGO_URL /" > /etc/apt/sources.list.d/arangodb.list
 
 RUN apt-get update && \
-    apt-get install arangodb
+    apt-get install arangodb && \
+    sed -ri \
+# https://docs.arangodb.com/ConfigureArango/Arangod.html
+        -e 's!127\.0\.0\.1!0.0.0.0!g' \
+# https://docs.arangodb.com/ConfigureArango/Logging.html
+        -e 's!^(file\s*=).*!\1 -!' \
+        /etc/arangodb/arangod.conf
 
-# expose the database directory (data), Foxx Application directory (apps, apps-dev) and logs
-VOLUME ["/data", "/apps", "/apps-dev", "/logs"]
+# retain the database directory and the Foxx Application directory
+VOLUME ["/var/lib/arangodb", "/var/lib/arangodb-apps"]
 
 # standard port
 EXPOSE 8529
 
-# add HELP file
-COPY ./HELP.md /HELP.md
-# start script
-COPY ./arangod-docker.conf /etc/arangodb/
-COPY ./start.sh /etc/arangodb/
-ENTRYPOINT ["/etc/arangodb/start.sh"]
+CMD ["/usr/sbin/arangod"]
