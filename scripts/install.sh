@@ -38,6 +38,7 @@ apt-get -y -qq --force-yes update
 apt-get -y -qq --force-yes install wget
 apt-get -y -qq install apt-transport-https
 apt-get -y -qq install pwgen
+apt-get -y -qq install libgoogle-perftools4
 
 # install from local source
 if test "$local" = "yes";  then
