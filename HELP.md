@@ -4,14 +4,14 @@ volumes:
   /apps-dev	application directory for development
   /logs    	log directory
 
-start in development mode:
-  docker run -e development=1 arangodb
-
 pipe the log file to standard out:
-  docker run -e verbose=1 arangodb
+  docker run arangodb standalone --verbose
+
+disable authentication
+  docker run arangodb standalone --disable-authentication
 
 fire up a bash after starting the server:
-  docker run -e console=1 -it arangodb
+  docker run -it arangodb standalone --console
 
 show all options:
-  docker run -e help=1 arangodb
+  docker run arangodb help
