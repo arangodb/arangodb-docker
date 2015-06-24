@@ -7,7 +7,7 @@ if test -z "${VERSION}" ; then
     exit 1
 fi
 
-mkdir jessie/${VERSION}
+mkdir -p jessie/${VERSION}
 #cp arangod-docker.conf HELP.md start.sh jessie/${VERSION}/
 cat Dockerfile.templ | sed \
     -e "s;@VERSION@;${VERSION};" \
