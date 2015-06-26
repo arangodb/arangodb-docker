@@ -14,8 +14,14 @@ RUN ./scripts/install.sh
 ADD ./HELP.md /HELP.md
 ADD ./commands /commands
 
+# copy any required foxxes
+ADD ./foxxes /foxxes
+
+# copy any local config files
+ADD ./local-config /etc/arangodb
+
 # expose data, apps and logs
-VOLUME ["/data", "/apps", "/apps-dev", "/logs"]
+VOLUME ["/data", "/apps", "/apps-dev", "/logs", "/foxxes"]
 
 # standard port
 EXPOSE 8529

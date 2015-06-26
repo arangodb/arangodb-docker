@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+initialize=1
+
 while [ "$#" -gt 0 ];  do
   opt=$1
   shift
@@ -11,6 +13,8 @@ while [ "$#" -gt 0 ];  do
     verbose=1
   elif [ "$opt" == "--disable-authentication" ];  then
     disable_authentication=1
+  elif [ "$opt" == "--disable-initialize" ];  then
+    initialize=0
   elif [ "$opt" == "--help" ];  then
     help=1
   else
@@ -37,28 +41,24 @@ mkdir /tmp/arangodb
 chown arangodb:arangodb /data /apps /apps-dev /logs /logs/arangodb.log /tmp/arangodb
 
 # pipe logfile to standard out
-if test "$verbose" = "1";  then
+if test "$verbose" == "1";  then
   tail -f /logs/arangodb.log &
 fi
 
 # initialize for first run
-if test ! -e /data/.initialized; then
+if test "$initialize" = "1" -a ! -e /data/.initialized; then
   /commands/initialize.sh
 fi
 
 # without authentication
-if test "$disable_authentication" = "1";  then
+if test "$disable_authentication" == "1";  then
   AUTH="--server.disable-authentication true"
 fi
 
 # start server
-if test "$console" = "1";  then
-  /usr/sbin/arangod \
-        --configuration /etc/arangodb/arangod.conf \
-        "$@" $AUTH &
+if test "$console" == "1";  then
+  /usr/sbin/arangod "$@" $AUTH &
   /bin/bash
 else
-  /usr/sbin/arangod \
-        --configuration /etc/arangodb/arangod.conf \
-	"$@" $AUTH
+  /usr/sbin/arangod "$@" $AUTH
 fi

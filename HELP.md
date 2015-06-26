@@ -13,5 +13,8 @@ disable authentication
 fire up a bash after starting the server:
   docker run -it arangodb standalone --console
 
+disable initilisation on first boot
+  docker run arangodb standalone --disable-initialize
+
 show all options:
   docker run arangodb help

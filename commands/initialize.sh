@@ -36,4 +36,11 @@ if [ ! -z "$DB" ]; then
 fi
 echo "========================================================================"
 
+# check for foxxes
+if test -f "/foxxes/mounts.json";  then
+  echo "checking for foxxes, please wait ..."
+
+  /usr/sbin/arangod --configuration /etc/arangodb/arangod.conf --log.level error --javascript.script /scripts/install-foxxes.js
+fi
+
 touch /data/.initialized
