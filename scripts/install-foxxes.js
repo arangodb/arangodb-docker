@@ -20,7 +20,7 @@ function main(argv) {
       mounts = JSON.parse(mounts);
     }
     catch (err) {
-      internal.print("'/foxx/mounts.json' file is corrupt, aborting install");
+      internal.print("'/foxxes/mounts.json' file is corrupt, aborting install");
       internal.print("(" + err.stack + ")");
       mounts = [];
     }
