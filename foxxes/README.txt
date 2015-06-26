@@ -1,4 +1,4 @@
-Create a document "mount.json" and specify the foxxes, which should
+Create a document "mounts.json" and specify the foxxes, which should
 be mount during init.
 
 Example:
