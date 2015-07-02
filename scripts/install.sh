@@ -19,7 +19,7 @@ case $VERSION in
 esac
 
 # set repostory path
-ARANGO_URL=https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04
+ARANGO_URL=https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_15.04
 echo " ---> Using repository $ARANGO_URL and version $VERSION"
 
 # check for local (non-network) install
@@ -29,13 +29,18 @@ if test -d /install; then
   local=yes
 fi
 
+echo Local is ">$local<"
+
 # non interactive
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # install system deps
 echo " ---> Updating ubuntu"
 apt-get -y -qq --force-yes update
-apt-get -y -qq --force-yes install wget
+apt-get -y -qq --force-yes install apt-utils
+apt-get -y -qq --force-yes upgrade
+apt-get -y -qq --force-yes install curl
+apt-get -y -qq --force-yes install libgoogle-perftools4
 apt-get -y -qq install apt-transport-https
 
 # install from local source
