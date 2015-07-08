@@ -4,7 +4,7 @@ MAINTAINER Frank Celler <info@arangodb.com>
 RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B
 
 ENV ARCHITECTURE amd64
-ENV ARANGO_VERSION 2.6.0
+ENV ARANGO_VERSION 2.6.1
 ENV ARANGO_URL https://www.arangodb.com/repositories/arangodb2/Debian_8.0
 ENV ARANGO_PACKAGE arangodb_${ARANGO_VERSION}_${ARCHITECTURE}.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARCHITECTURE}/${ARANGO_PACKAGE}

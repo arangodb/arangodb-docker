@@ -12,6 +12,7 @@ ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        libgoogle-perftools4 \
         ca-certificates \
         wget \
     && \
