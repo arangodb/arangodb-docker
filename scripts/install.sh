@@ -47,7 +47,7 @@ apt-get -y -qq install apt-transport-https
 if test "$local" = "yes";  then
 
   echo " ---> Using local ubuntu packages"
-  apt-key add - < /install/Release.key
+  # apt-key add - < /install/Release.key
   dpkg -i /install/arangodb_${VERSION}_amd64.deb
 
   rm -rf /install
@@ -64,7 +64,7 @@ else
 
     # install arangodb key
     echo "deb $ARANGO_URL/ /" >> /etc/apt/sources.list.d/arangodb.list
-    wget --quiet $ARANGO_URL/Release.key
+    curl -O $ARANGO_URL/Release.key
     apt-key add - < Release.key
     rm Release.key
 
@@ -74,7 +74,7 @@ else
     dpkg --install arangodb_*_amd64.deb
     rm arangodb_*_amd64.deb
   else
-    wget "https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04/amd64/arangodb_${VERSION}_amd64.deb"
+    curl -O "https://www.arangodb.com/repositories/${ARANGO_REPO}/xUbuntu_14.04/amd64/arangodb_${VERSION}_amd64.deb"
     dpkg --install arangodb_${VERSION}_amd64.deb
     rm arangodb_${VERSION}_amd64.deb
   fi

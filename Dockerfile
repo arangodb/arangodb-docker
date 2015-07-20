@@ -2,7 +2,7 @@ FROM ubuntu:15.04
 MAINTAINER Max Neunhoeffer <max@arangodb.com>
 
 # for local installation, uncomment
-# ADD ./arangodb /install
+ADD ./arangodb /install
 
 # add scripts to install and run ArangoDB
 ADD ./scripts /scripts
