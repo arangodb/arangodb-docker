@@ -92,8 +92,8 @@ unix> docker run -e help=1 arangodb/arangodb
 
 ## Persistent Data
 
-ArangoDB use the volume `/data` as database directory to store the collection
-data and the volume `/apps` as apps directory to store any extensions. These
+ArangoDB use the volume `/var/lib/arangodb` as database directory to store the collection
+data and the volume `/var/lib/arangodb-apps` as apps directory to store any extensions. These
 directories are marked as docker volumes.
 
 See `docker run -e help=1 arangodb` for all volumes.
@@ -111,7 +111,7 @@ not the correct place to store you persistent files - it is just an example!
 ```
 unix> mkdir /tmp/arangodb
 unix> docker run -p 8529:8529 -d \
-          -v /tmp/arangodb:/data \
+          -v /tmp/arangodb:/var/lib/arangodb \
           arangodb
 ```
 
@@ -123,7 +123,7 @@ for ArangoDB inside the container.
 Alternatively you can create a container holding the data.
 
 ```
-unix> docker run -d --name arangodb-persist -v /data debian:8.0 true
+unix> docker run -d --name arangodb-persist -v /var/lib/arangodb debian:8.0 true
 ```
 
 And use this data container in your ArangoDB container.
@@ -139,7 +139,7 @@ or
 for creating the volume only containers. For example
 
 ```
-unix> docker run -d --name arangodb-persist -v /data tianon/true true
+unix> docker run -d --name arangodb-persist -v /var/lib/arangodb tianon/true true
 ```
 
 # Images
