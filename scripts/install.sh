@@ -36,6 +36,7 @@ echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 echo " ---> Updating ubuntu"
 apt-get -y -qq --force-yes update
 apt-get -y -qq --force-yes install wget
+apt-get -y -qq --force-yes install libgoogle-perftools4
 apt-get -y -qq install apt-transport-https
 
 # install from local source
