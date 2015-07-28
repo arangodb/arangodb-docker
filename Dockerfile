@@ -1,9 +1,6 @@
 FROM ubuntu:15.04
 MAINTAINER Max Neunhoeffer <max@arangodb.com>
 
-# for local installation, uncomment
-ADD ./arangodb /install
-
 # add scripts to install and run ArangoDB
 ADD ./scripts /scripts
 
@@ -12,6 +9,9 @@ ADD ./HELP.md /HELP.md
 
 # install ubuntu package
 RUN ./scripts/install.sh
+
+# Get ArangoDB from github and compile it
+RUN ./scripts/install2.sh
 
 # expose data, apps and logs
 VOLUME ["/data", "/apps", "/apps-dev", "/logs"]

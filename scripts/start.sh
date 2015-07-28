@@ -34,7 +34,8 @@ fi
 
 # start server
 if test "$console" = "1";  then
-  /usr/sbin/arangod \
+  cd /ArangoDB/ArangoDB
+  ./bin/arangod \
         --uid arangodb \
         --gid arangodb \
         --database.directory /data \
@@ -46,7 +47,8 @@ if test "$console" = "1";  then
         "$@" &
   /bin/bash
 else
-  exec /usr/sbin/arangod \
+  cd /ArangoDB/ArangoDB
+  exec ./bin/arangod \
 	--uid arangodb \
 	--gid arangodb \
         --database.directory /data \
