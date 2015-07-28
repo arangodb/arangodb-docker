@@ -1,0 +1,10 @@
+#!/bin/bash
+#export MYDEBUG="-O0 -g"
+export MYDEBUG="-O3 -fomit-frame-pointer"
+export MYWARNCLANG="-Wextra -Wempty-body -Wparentheses -Wswitch -Wswitch-enum -Wunused-label"
+#export MYWARNCLANGCANCEL="-Wno-switch-enum -Wno-unused-parameter -Wno-shadow"
+export MYWARNCLANGCANCEL="-Wno-unused-parameter -Wno-switch-enum"
+export MYLDFLAGS=""
+export MERKEN="-ffunction-sections -fdata-sections"
+export MERKENLD="-Wl,--gc-sections,--print-gc-sections"
+./configure --enable-tcmalloc --enable-relative --enable-maintainer-mode CFLAGS="$MYDEBUG $MYWARNCLANG $MYWARNCLANGCANCEL -B$HOME/bin/gold" CXXFLAGS="$MYDEBUG $MYWARNCLANG $MYWARNCLANGCANCEL -B/usr/lib/gold-ld" CC="gcc" LDFLAGS="$MYLDFLAGS" CXX="g++"
