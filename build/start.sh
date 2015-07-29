@@ -1,6 +1,6 @@
 #!/bin/bash
 
-THIS_DIR="/home/jenkins/devel"
+THIS_DIR=`pwd`
 
 BRANCH=""
 
@@ -38,6 +38,7 @@ fi
 
 TMPDIR_NAME="tmp-docker-branch-${BRANCH}"
 rm -rf "/tmp/${TMPDIR_NAME}"
+rm -rf "${THIS_DIR}/result"
 echo "... creating tmp directory."
 mkdir "/tmp/${TMPDIR_NAME}"
 mkdir "/tmp/${TMPDIR_NAME}/packed"
@@ -56,18 +57,23 @@ chmod a+x /tmp/${TMPDIR_NAME}/*
 echo "... starting docker image."
 docker run -i --rm -v "/tmp/${TMPDIR_NAME}:/tmp/scripts" arangodb/build-docker /tmp/scripts/${DOCKER_SCRIPT}
 
+mkdir ${THIS_DIR}/result
+
 echo "... moving jenkins build."
-cp /tmp/${TMPDIR_NAME}/packed/* /home/jenkins/devel/image/run/scripts/
+cp /tmp/${TMPDIR_NAME}/packed/* ${THIS_DIR}/image/run/scripts/
 echo "REMOVE "
-mv /tmp/${TMPDIR_NAME}/packed/* /home/jenkins/devel/result/
+mv /tmp/${TMPDIR_NAME}/packed/* ${THIS_DIR}/result/
 echo "REMOVE "
 
 echo "... building docker run image"
-cd /home/jenkins/devel/image/run
-docker build -t arangodb/build-docker .
+cd ${THIS_DIR}/image/run
+docker build -t --name "arangodb/run-docker" arangodb/run-docker .
 
 echo "... removing tmp directory."
 rm -rf /tmp/${TMPDIR_NAME}
 
 echo "... removing tmp files."
 rm "${THIS_DIR}/scripts/${DOCKER_SCRIPT}"
+rm "${THIS_DIR}/image/run/scripts/ArangoDB-master.tar.gz"
+
+echo "... DONE."
