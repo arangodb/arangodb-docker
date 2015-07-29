@@ -67,7 +67,7 @@ echo "REMOVE "
 
 echo "... building docker run image"
 cd ${THIS_DIR}/image/run
-docker build -t --name "arangodb/run-docker" arangodb/run-docker .
+docker build -t arangodb/run-docker .
 
 echo "... removing tmp directory."
 rm -rf /tmp/${TMPDIR_NAME}
