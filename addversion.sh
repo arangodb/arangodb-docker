@@ -7,6 +7,11 @@ if test -z "${VERSION}" ; then
     exit 1
 fi
 
+if test -d "jessie/${VERSION}"; then 
+    echo "there already is jessie/${VERSION}! Exit now."
+    exit
+fi
+
 mkdir -p jessie/${VERSION}
 
 cat Dockerfile.templ | sed \
