@@ -8,10 +8,10 @@ if test -z "${VERSION}" ; then
 fi
 
 mkdir -p jessie/${VERSION}
-#cp arangod-docker.conf HELP.md start.sh jessie/${VERSION}/
+
 cat Dockerfile.templ | sed \
     -e "s;@VERSION@;${VERSION};" \
     > jessie/${VERSION}/Dockerfile
 
-#git add jessie/${VERSION}
-#git commit jessie/${VERSION}
+git add jessie/${VERSION}
+git commit jessie/${VERSION} -m
