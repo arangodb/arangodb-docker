@@ -14,6 +14,6 @@ cat Dockerfile.templ | sed \
     > jessie/${VERSION}/Dockerfile
 
 git add jessie/${VERSION}
-git commit jessie/${VERSION} -m "Add new version ${VERSION"
+git commit jessie/${VERSION} -m "Add new version ${VERSION}"
 git push
 
