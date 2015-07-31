@@ -55,25 +55,22 @@ cp ${THIS_DIR}/scripts/* /tmp/${TMPDIR_NAME}/
 chmod a+x /tmp/${TMPDIR_NAME}/*
 
 echo "... starting docker image."
-docker run -i --rm -v "/tmp/${TMPDIR_NAME}:/tmp/scripts" arangodb/build-docker /tmp/scripts/${DOCKER_SCRIPT}
+docker run -i --rm -v "/tmp/${TMPDIR_NAME}:/tmp/scripts" "arangodb/build-docker" /tmp/scripts/${DOCKER_SCRIPT}
 
 mkdir ${THIS_DIR}/result
 
 echo "... moving jenkins build."
 cp /tmp/${TMPDIR_NAME}/packed/* ${THIS_DIR}/image/run/scripts/
-echo "REMOVE "
-mv /tmp/${TMPDIR_NAME}/packed/* ${THIS_DIR}/result/
-echo "REMOVE "
 
 echo "... building docker run image"
 cd ${THIS_DIR}/image/run
-docker build -t arangodb/run-docker .
+docker build -t "arangodb-preview:nightly.${BRANCH}" .
 
 echo "... removing tmp directory."
 rm -rf /tmp/${TMPDIR_NAME}
 
 echo "... removing tmp files."
 rm "${THIS_DIR}/scripts/${DOCKER_SCRIPT}"
-rm "${THIS_DIR}/image/run/scripts/ArangoDB-master.tar.gz"
+rm "${THIS_DIR}/image/run/scripts/ArangoDB-${BRANCH}.tar.gz"
 
 echo "... DONE."

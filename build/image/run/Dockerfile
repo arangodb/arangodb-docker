@@ -17,10 +17,10 @@ RUN mkdir /etc/arangodb
 RUN cp /tmp/scripts/arangod-docker.conf /etc/arangodb
 
 RUN mkdir /home/arangodb/
-RUN tar xfvz /tmp/scripts/ArangoDB-master.tar.gz -C /home/arangodb
+RUN tar xfvz /tmp/scripts/ArangoDB-*.tar.gz -C /home/arangodb
 RUN cp -r /home/arangodb/tmp/arango/usr/local/* /usr/
 RUN rm -rf /home/arangodb/
-RUN rm -rf /tmp/scripts/ArangoDB-master.tar.gz
+RUN rm -rf /tmp/scripts/ArangoDB-*.tar.gz
 
 # create data, apps and log directory
 RUN mkdir /data /apps /apps-dev /logs
