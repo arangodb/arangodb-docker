@@ -1,17 +1,22 @@
 volumes:
-  /data    	database files
-  /apps    	application directory
-  /apps-dev	application directory for development
-  /logs    	log directory
+  /var/lib/arangodb    		database files
+  /var/lib/arangodb-apps	application directory
+  /var/log/arangodb		log directory
 
-start in development mode:
-  docker run -e development=1 arangodb
+run an upgrade:
+  docker run arangodb standalone --upgrade
 
 pipe the log file to standard out:
-  docker run -e verbose=1 arangodb
+  docker run arangodb standalone --verbose
 
 fire up a bash after starting the server:
-  docker run -e console=1 -it arangodb
+  docker run -it arangodb standalone --console
+
+disable authentication
+  docker run arangodb standalone --disable-authentication
+
+disable initialisation on first boot
+  docker run arangodb standalone --disable-initialize
 
 show all options:
-  docker run -e help=1 arangodb
+  docker run arangodb help
