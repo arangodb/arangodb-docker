@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM debian:jessie
 MAINTAINER Frank Celler <info@arangodb.com>
 
 # for local installation, uncomment
@@ -7,17 +7,25 @@ MAINTAINER Frank Celler <info@arangodb.com>
 # add scripts to install and run ArangoDB
 ADD ./scripts /scripts
 
-# add HELP file
-ADD ./HELP.md /HELP.md
-
 # install ubuntu package
 RUN ./scripts/install.sh
 
+# add commands
+ADD ./HELP.md /HELP.md
+ADD ./commands /commands
+
+# copy any required foxxes
+ADD ./foxxes /foxxes
+
+# copy any local config files
+ADD ./local-config /etc/arangodb
+
 # expose data, apps and logs
-VOLUME ["/data", "/apps", "/apps-dev", "/logs"]
+VOLUME ["/data", "/apps", "/apps-dev", "/logs", "/foxxes"]
 
 # standard port
 EXPOSE 8529
 
 # start script
-CMD ["/scripts/start.sh"]
+ENTRYPOINT ["/scripts/commands.sh"]
+CMD ["standalone"]
