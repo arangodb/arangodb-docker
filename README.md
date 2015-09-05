@@ -1,4 +1,5 @@
 # Overview / Links
+
 ArangoDB is a multi-model, open-source database with flexible data
 models for documents, graphs, and key-values. Build high performance
 applications using a convenient SQL-like query language or JavaScript
@@ -10,8 +11,15 @@ to be the aggregation point for the data request you have in mind.
 
 Dockerfile: [`Latest` (Dockerfile)](https://github.com/arangodb/arangodb-docker/blob/master/Dockerfile)
 
-Key Features in ArangoDB
-------------------------
+**Note** that we have changed the location of the data files, in order
+to be compatible with the official docker image (see
+https://github.com/docker-library/official-images/pull/728):
+
+- `/var/lib/arangodb` instead of `/data`
+- `/var/lib/arangodb-apps` instead of `/apps`
+- `/var/log/arangodb` instead of `/logs`
+
+## Key Features in ArangoDB
 
 **Multi-Model**
 Documents, graphs and key-value pairs — model your data as you see fit
@@ -37,6 +45,7 @@ Furthermore, ArangoDB offers a microservice framework called
 a few lines of code.
 
 ## ArangoDB Documentation
+
 - [ArangoDB Documentation](https://www.arangodb.com/documentation)
 - [ArangoDB Tutorials](https://www.arangodb.com/tutorials)
 
@@ -166,8 +175,8 @@ unix> docker run -e help=1 arangodb/arangodb
 
 ## Persistent Data
 
-ArangoDB use the volume `/data` as database directory to store the
-collection data and the volume `/apps` as apps directory to store any
+ArangoDB use the volume `/var/lib/arangodb` as database directory to store the
+collection data and the volume `/var/lib/arangodb-apps` as apps directory to store any
 extensions. These directories are marked as docker volumes.
 
 See `docker run -e help=1 arangodb` for all volumes.
@@ -186,7 +195,7 @@ persistent files - it is just an example!
 ```
 unix> mkdir /tmp/arangodb
 unix> docker run -p 8529:8529 -d \
-          -v /tmp/arangodb:/data \
+          -v /tmp/arangodb:/var/lib/arangodb \
           arangodb
 ```
 
@@ -198,7 +207,7 @@ directory for ArangoDB inside the container.
 Alternatively you can create a container holding the data.
 
 ```
-unix> docker run -d --name arangodb-persist -v /data debian:8.0 true
+unix> docker run -d --name arangodb-persist -v /var/lib/arangodb debian:8.0 true
 ```
 
 And use this data container in your ArangoDB container.
@@ -214,7 +223,7 @@ or
 for creating the volume only containers. For example
 
 ```
-unix> docker run -d --name arangodb-persist -v /data tianon/true true
+unix> docker run -d --name arangodb-persist -v /var/lib/arangodb tianon/true true
 ```
 
 # Images

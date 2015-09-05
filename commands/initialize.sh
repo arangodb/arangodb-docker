@@ -37,7 +37,7 @@ fi
 echo "========================================================================"
 
 # check for foxxes
-if test -f "/foxxes/mounts.json";  then
+if test -f "/var/lib/arangodb-foxxes/mounts.json";  then
   echo "checking for foxxes, please wait ..."
 
   /usr/sbin/arangod --configuration /etc/arangodb/arangod.conf --log.level error --javascript.script /scripts/install-foxxes.js
@@ -45,4 +45,4 @@ if test -f "/foxxes/mounts.json";  then
   echo "installation has finished"
 fi
 
-touch /data/.initialized
+touch /var/lib/arangodb/.initialized

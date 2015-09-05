@@ -3,7 +3,7 @@ set -e
 
 initialize=1
 
-while [ "$#" -gt 0 ];  do
+while [ "$#" -gt 0 -a "$1" != "--" ];  do
   opt=$1
   shift
 
@@ -11,6 +11,8 @@ while [ "$#" -gt 0 ];  do
     console=1
   elif [ "$opt" == "--verbose" ];  then
     verbose=1
+  elif [ "$opt" == "--upgrade" ];  then
+    upgrade=1
   elif [ "$opt" == "--disable-authentication" ];  then
     disable_authentication=1
   elif [ "$opt" == "--disable-initialize" ];  then
@@ -23,6 +25,10 @@ while [ "$#" -gt 0 ];  do
   fi
 done
 
+if [ "$#" -gt 0 -a "$1" == "--" ];  then
+  shift
+fi
+
 # help
 if test "$help" == "1";  then
   cat /HELP.md
@@ -34,19 +40,27 @@ echo
 echo "starting ArangoDB in stand-alone mode"
 
 # fix permissions
-touch /logs/arangodb.log
+mkdir -p /var/lib/arangodb/cluster
+mkdir -p /var/log/arangodb/cluster
+mkdir -p /var/lib/arangodb-apps
+
+touch /var/log/arangodb/arangodb.log
+
 rm -rf /tmp/arangodb
 mkdir /tmp/arangodb
 
-chown arangodb:arangodb /data /apps /apps-dev /logs /logs/arangodb.log /tmp/arangodb
+chown -R arangodb:arangodb \
+    /var/lib/arangodb \
+    /var/lib/arangodb-apps \
+    /var/log/arangodb
 
 # pipe logfile to standard out
 if test "$verbose" == "1";  then
-  tail -f /logs/arangodb.log &
+  tail -f /var/log/arangodb/arangodb.log &
 fi
 
 # initialize for first run
-if test "$initialize" = "1" -a ! -e /data/.initialized; then
+if test "$initialize" = "1" -a ! -e /var/lib/arangodb/.initialized; then
   /commands/initialize.sh
 fi
 
@@ -56,7 +70,9 @@ if test "$disable_authentication" == "1";  then
 fi
 
 # start server
-if test "$console" == "1";  then
+if test "$upgrade" == "1";  then
+  /usr/sbin/arangod "$@" --upgrade
+elif test "$console" == "1";  then
   /usr/sbin/arangod "$@" $AUTH &
   /bin/bash
 else
