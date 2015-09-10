@@ -19,7 +19,7 @@ case $VERSION in
 esac
 
 # set repostory path
-ARANGO_URL=https://www.arangodb.com/repositories/${ARANGO_REPO}/Debian_7.0
+ARANGO_URL=https://www.arangodb.com/repositories/${ARANGO_REPO}/Debian_8.0
 echo " ---> Using repository $ARANGO_URL and version $VERSION"
 
 # check for local (non-network) install
@@ -72,7 +72,7 @@ else
     dpkg --install arangodb_*_amd64.deb
     rm arangodb_*_amd64.deb
   else
-    wget "https://www.arangodb.com/repositories/${ARANGO_REPO}/Debian_8.0/amd64/arangodb_${VERSION}_amd64.deb"
+    wget --quiet "https://www.arangodb.com/repositories/${ARANGO_REPO}/Debian_8.0/amd64/arangodb_${VERSION}_amd64.deb"
     dpkg --install arangodb_${VERSION}_amd64.deb
     rm arangodb_${VERSION}_amd64.deb
   fi
@@ -91,11 +91,9 @@ echo " ---> Fixing config files"
   cd /etc/arangodb
 
   echo 'temp-path = /tmp/arangodb' > arangod.conf.new
-  sed -e 's~^directory.*~\n'"$msg"'\ndirectory = /data\n~' \
-    -e 's~^app-path.*~\n'"$msg"'\napp-path = /apps\n~' \
-    -e 's~^file.*~\n'"$msg"'\nfile = /logs/arangodb.log\n~' \
-    -e 's~^data-path.*~data-path = /lib/cluster~' \
-    -e 's~^log-path.*~log-path = /logs/cluster~' \
+  sed \
+    -e 's~^data-path.*~data-path = /var/lib/arangodb/cluster~' \
+    -e 's~^log-path.*~log-path = /var/log/arangodb/cluster~' \
     -e 's~^agent-path.*~agent-path = /usr/bin/arangodb/etcd-arango~' \
     -e 's~^arangod-path.*~arangod-path = /usr/sbin/arangod~' \
     -e 's~^dbserver-config.*~dbserver-config = /etc/arangodb/arangod.conf~' \
@@ -110,9 +108,3 @@ echo " ---> Fixing config files"
     mv $i.new $i
   done
 )
-
-# create data, apps and log directory
-echo " ---> Setting up exported directories"
-
-mkdir /data /apps /apps-dev /logs
-chown arangodb:arangodb /data /apps /apps-dev /logs

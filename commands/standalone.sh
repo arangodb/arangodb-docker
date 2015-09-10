@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-while [ "$#" -gt 0 ];  do
+initialize=1
+
+while [ "$#" -gt 0 -a "$1" != "--" ];  do
   opt=$1
   shift
 
@@ -9,8 +11,12 @@ while [ "$#" -gt 0 ];  do
     console=1
   elif [ "$opt" == "--verbose" ];  then
     verbose=1
+  elif [ "$opt" == "--upgrade" ];  then
+    upgrade=1
   elif [ "$opt" == "--disable-authentication" ];  then
     disable_authentication=1
+  elif [ "$opt" == "--disable-initialize" ];  then
+    initialize=0
   elif [ "$opt" == "--help" ];  then
     help=1
   else
@@ -18,6 +24,10 @@ while [ "$#" -gt 0 ];  do
     exit 1
   fi
 done
+
+if [ "$#" -gt 0 -a "$1" == "--" ];  then
+  shift
+fi
 
 # help
 if test "$help" == "1";  then
@@ -30,35 +40,41 @@ echo
 echo "starting ArangoDB in stand-alone mode"
 
 # fix permissions
-touch /logs/arangodb.log
+mkdir -p /var/lib/arangodb/cluster
+mkdir -p /var/log/arangodb/cluster
+mkdir -p /var/lib/arangodb-apps
+
+touch /var/log/arangodb/arangodb.log
+
 rm -rf /tmp/arangodb
 mkdir /tmp/arangodb
 
-chown arangodb:arangodb /data /apps /apps-dev /logs /logs/arangodb.log /tmp/arangodb
+chown -R arangodb:arangodb \
+    /var/lib/arangodb \
+    /var/lib/arangodb-apps \
+    /var/log/arangodb
 
 # pipe logfile to standard out
-if test "$verbose" = "1";  then
-  tail -f /logs/arangodb.log &
+if test "$verbose" == "1";  then
+  tail -f /var/log/arangodb/arangodb.log &
 fi
 
 # initialize for first run
-if test ! -e /data/.initialized; then
+if test "$initialize" = "1" -a ! -e /var/lib/arangodb/.initialized; then
   /commands/initialize.sh
 fi
 
 # without authentication
-if test "$disable_authentication" = "1";  then
+if test "$disable_authentication" == "1";  then
   AUTH="--server.disable-authentication true"
 fi
 
 # start server
-if test "$console" = "1";  then
-  /usr/sbin/arangod \
-        --configuration /etc/arangodb/arangod.conf \
-        "$@" $AUTH &
+if test "$upgrade" == "1";  then
+  /usr/sbin/arangod "$@" --upgrade
+elif test "$console" == "1";  then
+  /usr/sbin/arangod "$@" $AUTH &
   /bin/bash
 else
-  /usr/sbin/arangod \
-        --configuration /etc/arangodb/arangod.conf \
-	"$@" $AUTH
+  /usr/sbin/arangod "$@" $AUTH
 fi
