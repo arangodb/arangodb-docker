@@ -52,7 +52,8 @@ mkdir /tmp/arangodb
 chown -R arangodb:arangodb \
     /var/lib/arangodb \
     /var/lib/arangodb-apps \
-    /var/log/arangodb
+    /var/log/arangodb \
+    /tmp/arangodb
 
 # pipe logfile to standard out
 if test "$verbose" == "1";  then
