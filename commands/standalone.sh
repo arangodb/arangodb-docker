@@ -47,7 +47,6 @@ mkdir -p /var/lib/arangodb-apps
 touch /var/log/arangodb/arangodb.log
 
 rm -rf /tmp/arangodb
-mkdir /tmp/arangodb
 
 chown -R arangodb:arangodb \
     /var/lib/arangodb \
