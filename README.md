@@ -56,7 +56,7 @@ a few lines of code.
 In order to start an ArangoDB instance run
 
 ```
-unix> docker run -d --name arangodb-instance -d arangodb/arangodb
+unix> docker run -d --name arangodb-instance arangodb/arangodb
 ```
 
 Will create and launch the arangodb docker instance as background
