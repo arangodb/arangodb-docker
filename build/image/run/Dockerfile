@@ -16,15 +16,18 @@ RUN apt-get install -y apt-utils libssl-dev libgoogle-perftools4
 RUN mkdir /etc/arangodb
 RUN cp /tmp/scripts/arangod-docker.conf /etc/arangodb
 
-# expose data, apps and logs
-VOLUME ["/data", "/apps", "/apps-dev", "/logs" "/script/"]
-
-RUN "/script/extract_arangodb.sh"
+RUN mkdir /home/arangodb/
+RUN tar xfvz /tmp/scripts/ArangoDB-*.tar.gz -C /home/arangodb
+RUN cp -r /home/arangodb/tmp/arango/usr/local/* /usr/
+RUN rm -rf /home/arangodb/
+RUN rm -rf /tmp/scripts/ArangoDB-*.tar.gz
 
 # create data, apps and log directory
 RUN mkdir /data /apps /apps-dev /logs
 RUN chown arangodb:arangodb /data /apps /apps-dev /logs
 
+# expose data, apps and logs
+VOLUME ["/data", "/apps", "/apps-dev", "/logs"]
 
 # standard port
 EXPOSE 8529
