@@ -61,8 +61,8 @@ unix> docker run -d --name arangodb-instance arangodb/arangodb
 
 Will create and launch the arangodb docker instance as background
 process.  The Identifier of the process is printed.  By default
-ArangoDB listen on port 8529 for request and the image includes
-`EXPOST 8529`. If you link an application container it is
+ArangoDB listens on port 8529 for requests and the image includes
+`EXPOSE 8529`. If you link an application container it is
 automatically available in the linked container. See the following
 examples.
 
@@ -162,8 +162,8 @@ If you want to expose the port to the outside world, run
 unix> docker run -p 8529:8529 -d arangodb/arangodb
 ```
 
-ArangoDB listen on port 8529 for request and the image includes
-`EXPOST 8529`. The `-p 8529:8529` exposes this port on the host.
+ArangoDB listens on port 8529 for requests and the image includes
+`EXPOSE 8529`. The `-p 8529:8529` exposes this port on the host.
 
 ### Command line options
 
@@ -189,7 +189,7 @@ A good explanation about persistence and docker container can be found here:
 
 You can map the container's volumes to a directory on the host, so
 that the data is kept between runs of the container. This path
-`/tmp/arangodb` is in general not the correct place to store you
+`/tmp/arangodb` is in general not the correct place to store your
 persistent files - it is just an example!
 
 ```
