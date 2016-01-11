@@ -45,7 +45,7 @@ if test "$local" = "yes";  then
   #groupadd arangodb
   #useradd arangodb -g arangodb
   echo " ---> Using local packages"
-  apt-key add - < /install/Release.key
+  #apt-key add - < /install/Release.key
   dpkg -i /install/arangodb_${VERSION}_amd64.deb
 
   rm -rf /install
@@ -103,8 +103,8 @@ echo " ---> Fixing config files"
     -e 's~^# gid~gid~' < arangod.conf >> arangod.conf.new
   mv arangod.conf.new arangod.conf
 
-  for i in *.conf; do
-    sed -e 's~^disable-authentication.*~disable-authentication = no~' < $i > $i.new
-    mv $i.new $i
-  done
+  #for i in *.conf; do
+  #  sed -e 's~^disable-authentication.*~disable-authentication = no~' < $i > $i.new
+  #  mv $i.new $i
+  #done
 )
