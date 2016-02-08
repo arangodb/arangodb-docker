@@ -3,7 +3,7 @@ ArangoDB is a multi-model, open-source database with flexible data models for do
 
 The supported data models can be mixed in queries and allow ArangoDB to be the aggregation point for the data request you have in mind.
 
-Dockerfile: [`Latest` (Dockerfile)](https://github.com/arangodb/arangodb-docker/blob/master/Dockerfile)
+Dockerfile: [`Latest` (Dockerfile)](https://github.com/arangodb/arangodb-docker/blob/master/Dockerfile.templ)
 
 Key Features in ArangoDB
 ------------------------
@@ -31,7 +31,7 @@ ArangoDB Documentation
 
 In order to start an ArangoDB instance run
 
-    unix> docker run -d --name arangodb-instance -d arangodb/arangodb
+    unix> docker run -e ARANGO_RANDOM_ROOT_PASSWORD=1 -d --name arangodb-instance -d arangodb/arangodb
 
 Will create and launch the arangodb docker instance as background process.
 The Identifier of the process is printed.
@@ -49,7 +49,7 @@ In order to get the IP arango listens on run:
 
 In order to use the running instance from an application, link the container
 
-    unix> docker run --name my-app --link arangodb-instance:db-link arangodb/arangodb
+    unix> docker run -e ARANGO_RANDOM_ROOT_PASSWORD=1 --name my-app --link arangodb-instance:db-link arangodb/arangodb
 
 This will use the instance with the name `arangodb-instance` and link it into
 the application container. The application container will contain environment
@@ -67,7 +67,7 @@ These can be used to access the database.
 
 If you want to expose the port to the outside world, run
 
-    unix> docker run -p 8529:8529 -d arangodb/arangodb
+    unix> docker run -e ARANGO_RANDOM_ROOT_PASSWORD=1 -p 8529:8529 -d arangodb/arangodb
 
 ArangoDB listen on port 8529 for request and the image includes `EXPOST
 8529`. The `-p 8529:8529` exposes this port on the host.
@@ -76,7 +76,7 @@ ArangoDB listen on port 8529 for request and the image includes `EXPOST
 
 In order to get a list of supported options, run
 
-    unix> docker run -e help=1 arangodb/arangodb
+    unix> docker run -e ARANGO_RANDOM_ROOT_PASSWORD=1 arangodb/arangodb arangod --help
 
 ## Persistent Data
 
@@ -84,7 +84,7 @@ ArangoDB use the volume `/var/lib/arangodb` as database directory to store the c
 data and the volume `/var/lib/arangodb-apps` as apps directory to store any extensions. These
 directories are marked as docker volumes.
 
-See `docker run -e help=1 arangodb` for all volumes.
+See `docker inspect --format "{{ .Config.Volumes}}" arangodb/arangodb` for all volumes.
 
 A good explanation about persistence and docker container can be found here:
 [Docker In-depth: Volumes](http://container42.com/2014/11/03/docker-indepth-volumes/),
@@ -97,7 +97,7 @@ is kept between runs of the container. This path `/tmp/arangodb` is in general
 not the correct place to store you persistent files - it is just an example!
 
     unix> mkdir /tmp/arangodb
-    unix> docker run -p 8529:8529 -d \
+    unix> docker -e ARANGO_RANDOM_ROOT_PASSWORD=1 run -p 8529:8529 -d \
               -v /tmp/arangodb:/var/lib/arangodb \
               arangodb
 
@@ -108,17 +108,18 @@ for ArangoDB inside the container.
 
 Alternatively you can create a container holding the data.
 
-    unix> docker run -d --name arangodb-persist -v /var/lib/arangodb debian:8.0 true
+    unix> docker create --name arangodb-persist arangodb/arangodb true
 
 And use this data container in your ArangoDB container.
 
-    unix> docker run --volumes-from arangodb-persist -p 8529:8529 arangodb
+    unix> docker run -e ARANGO_RANDOM_ROOT_PASSWORD=1 --volumes-from arangodb-persist -p 8529:8529 arangodb
 
 If want to save a few bytes you can alternatively use
 [tianon/true](https://registry.hub.docker.com/u/tianon/true/)
 or
 [progrium/busybox](https://registry.hub.docker.com/u/progrium/busybox/)
-for creating the volume only containers. For example
+for creating the volume only containers.
+Please note that you need to provide the used volumes in this case. For example
 
     unix> docker run -d --name arangodb-persist -v /var/lib/arangodb tianon/true true
 
@@ -126,10 +127,17 @@ for creating the volume only containers. For example
 
 ## Building an image
 
-Simple clone the repository and execute the following command in the
-`arangodb-docker` folder
+We are auto generating docker images via our build system so the Dockerfile is a template. To build your own ArangoDB image:
 
-    unix> docker build -t arangodb .
+```
+cp Dockerfile.templ Dockerfile
+```
+
+Adjust @VERSION@ in the Dockerfile and issue:
+
+```
+docker build -t arangodb .
+```
 
 This will create an image named `arangodb`.
 
@@ -149,7 +157,7 @@ Before you start to code, we recommend discussing your plans through a [GitHub i
 
 # LICENSE
 
-Copyright (c) 2015 ArangoDB GmbH, published under Apache V2.0 License.
+Copyright (c) 2015-2016 ArangoDB GmbH, published under Apache V2.0 License.
 
 Based on
 
@@ -157,3 +165,4 @@ Based on
 - https://github.com/hipertracker/docker-arangodb
 - https://github.com/joaodubas/docker-arangodb
 - https://github.com/webwurst/docker-arangodb
+- https://github.com/docker-library/mysql/
