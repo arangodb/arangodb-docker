@@ -7,10 +7,10 @@ if [ "${1:0:1}" = '-' ]; then
 fi
 
 if [ "$1" = 'arangod' ]; then
-        mkdir -p /var/lib/arangodb-apps
 	DATADIR=/var/lib/arangodb
-        mkdir -p "$DATADIR"
-	chown -R arangodb:arangodb "$DATADIR"
+	
+        # ensure proper uid and gid (for example when volume is mounted from the outside)
+        chown -R arangodb:arangodb "$DATADIR"
 	chown -R arangodb:arangodb /var/lib/arangodb-apps
 	if [ ! -f "$DATADIR"/SERVER ]; then
 		if [ -z "$ARANGO_ROOT_PASSWORD" -a -z "$ARANGO_NO_AUTH" -a -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
@@ -18,8 +18,6 @@ if [ "$1" = 'arangod' ]; then
 			echo >&2 '  You need to specify one of $ARANGO_ROOT_PASSWORD, $ARANGO_NO_AUTH and $ARANGO_RANDOM_ROOT_PASSWORD'
 			exit 1
 		fi
-
-		chown -R arangodb:arangodb "$DATADIR"
                 
                 echo "Initializing database...Hang on..."
                 if [ ! -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then

@@ -1,8 +1,6 @@
 FROM debian:jessie
 MAINTAINER Frank Celler <info@arangodb.com>
 
-RUN groupadd -r arangodb && useradd -r -g arangodb arangodb
-
 RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B
 
 COPY arangodb.deb /arangodb.deb
