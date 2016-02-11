@@ -1,4 +1,4 @@
-# Overview / Links
+# What is ArangoDB?
 ArangoDB is a multi-model, open-source database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions. Use ACID transactions if you require them. Scale horizontally and vertically with a few mouse clicks.
 
 The supported data models can be mixed in queries and allow ArangoDB to be the aggregation point for the data request you have in mind.
@@ -17,7 +17,7 @@ Conveniently join what belongs together for flexible ad-hoc querying, less data 
 **Transactions**
 Easy application development keeping your data consistent and safe. No hassle in your client.
 
-Joins and Transactions are key features for flexible, secure data designs, widely used in RDBMSs that you won’t want to miss in NoSQL products. You decide how and when to use Joins and strong consistency guarantees, keeping all the power for scaling and performance as choice. 
+Joins and Transactions are key features for flexible, secure data designs, widely used in RDBMSs that you won't want to miss in NoSQL products. You decide how and when to use Joins and strong consistency guarantees, keeping all the power for scaling and performance as choice. 
 
 Furthermore, ArangoDB offers a microservice framework called [Foxx](https://www.arangodb.com/foxx) to build your own Rest API with a few lines of code.
 
@@ -25,7 +25,7 @@ ArangoDB Documentation
 - [ArangoDB Documentation](https://www.arangodb.com/documentation)
 - [ArangoDB Tutorials](https://www.arangodb.com/tutorials)
 
-## Usage
+## How to use this image
 
 ### Start an ArangoDB instance
 
@@ -36,7 +36,7 @@ In order to start an ArangoDB instance run
 Will create and launch the arangodb docker instance as background process.
 The Identifier of the process is printed.
 By default ArangoDB listen on port 8529 for request and the image includes
-`EXPOST 8529`. If you link an application container it is automatically
+`EXPOSE 8529`. If you link an application container it is automatically
 available in the linked container. See the following examples.
 
 In order to get the IP arango listens on run:
@@ -69,8 +69,26 @@ If you want to expose the port to the outside world, run
 
     unix> docker run -e ARANGO_RANDOM_ROOT_PASSWORD=1 -p 8529:8529 -d arangodb/arangodb
 
-ArangoDB listen on port 8529 for request and the image includes `EXPOST
+ArangoDB listen on port 8529 for request and the image includes `EXPOSE
 8529`. The `-p 8529:8529` exposes this port on the host.
+
+### Choosing an authentication method
+
+The ArangoDB image provides several authentication methods which can be specified via environment variables (-e) when using `docker run`
+
+1. ARANGO_RANDOM_ROOT_PASSWORD=1
+
+   Generate a random root password when starting. The password will be printed to stdout (may be inspected later using `docker logs`)
+   
+2. ARANGO_NO_AUTH=1
+
+   Disable authentication. Useful for testing.
+   
+   **WARNING** Doing so in production will expose all your data. Make sure that ArangoDB is not diretcly accessible from the internet!
+
+3. ARANGO_ROOT_PASSWORD=somepassword
+
+   Specify your own root password.
 
 ### Command line options
 
@@ -123,9 +141,7 @@ Please note that you need to provide the used volumes in this case. For example
 
     unix> docker run -d --name arangodb-persist -v /var/lib/arangodb tianon/true true
 
-# Images
-
-## Building an image
+## Building your own ArangoDB image
 
 We are auto generating docker images via our build system so the Dockerfile is a template. To build your own ArangoDB image:
 
@@ -140,29 +156,3 @@ docker build -t arangodb .
 ```
 
 This will create an image named `arangodb`.
-
-# User Feedback
-
-## Issues
-
-If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/arangodb/arangodb-docker/issues).
-
-You can also reach many of the official image maintainers via the `#docker-library` IRC channel on [Freenode](https://freenode.net) - ArangoDB specific questions can be asked in `#arangodb`. 
-
-## Contributing
-
-You are invited to contribute new features, fixes, or updates, large or small; we are always thrilled to receive pull requests, and do our best to process them as fast as we can.
-
-Before you start to code, we recommend discussing your plans through a [GitHub issue](https://github.com/arangodb/arangodb-docker/issues), especially for more ambitious contributions. This gives other contributors a chance to point you in the right direction, give you feedback on your design, and help you find out if someone else is working on the same thing.
-
-# LICENSE
-
-Copyright (c) 2015-2016 ArangoDB GmbH, published under Apache V2.0 License.
-
-Based on
-
-- https://github.com/frodenas/docker-arangodb
-- https://github.com/hipertracker/docker-arangodb
-- https://github.com/joaodubas/docker-arangodb
-- https://github.com/webwurst/docker-arangodb
-- https://github.com/docker-library/mysql/
