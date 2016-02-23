@@ -35,6 +35,8 @@ RUN apt-get update && \
     apt-get purge -y --auto-remove ca-certificates wget && \
     rm -f ${ARANGO_PACKAGE}*
 
+RUN chown arangodb:arangodb /var/lib/arangodb && \
+  chown arangodb:arangodb /var/lib/arangodb-apps
 # retain the database directory and the Foxx Application directory
 VOLUME ["/var/lib/arangodb", "/var/lib/arangodb-apps"]
 
@@ -44,4 +46,5 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 # standard port
 EXPOSE 8529
+USER arangodb
 CMD ["arangod"]
