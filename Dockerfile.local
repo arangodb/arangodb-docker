@@ -3,8 +3,6 @@ MAINTAINER Frank Celler <info@arangodb.com>
 
 RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B
 
-COPY arangodb.deb /arangodb.deb
-
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libgoogle-perftools4 \
@@ -13,6 +11,8 @@ RUN apt-get update && \
         wget \
     && \
     rm -rf /var/lib/apt/lists/*
+
+COPY arangodb.deb /arangodb.deb
 
 RUN dpkg -i arangodb.deb && \
     sed -ri \
