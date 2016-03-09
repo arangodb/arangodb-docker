@@ -1,15 +1,18 @@
 #!/bin/bash
 set -eo pipefail
 
-# if command starts with an option, prepend mysqld
-if [ "${1:0:1}" = '-' ]; then
-	set -- arangod "$@"
-fi
+DISABLE_AUTHENTICATION="true"
 
 function rwfail {
   echo "We seem to not have proper rw access to $1. Please make sure that every mounted volume has full rw access for user arangodb ($(id arangodb))"
   exit 55
 }
+
+# if command starts with an option, prepend arangod
+if [ "${1:0:1}" = '-' ]; then
+	set -- arangod "$@"
+fi
+
 
 if [ "$1" = 'arangod' ]; then
 	DATADIR=/var/lib/arangodb
@@ -40,11 +43,19 @@ if [ "$1" = 'arangod' ]; then
                     echo "require(\"org/arangodb/users\").replace(\"root\", \"$ARANGO_ROOT_PASSWORD\");"
                   ) |
                   /usr/sbin/arangod --console --log.tty "" &> /dev/null
-                  sed -ri -e 's!^disable-authentication.*!disable-authentication = false!' /etc/arangodb/arangod.conf
+                  DISABLE_AUTHENTICATION="false"
                 fi
                 # Initialize if not already done
                 /usr/sbin/arangod --console --upgrade
 	fi
+fi
+
+if [ "$1" == "arangod" ]; then
+  # if we really want to start arangod and not bash or any other thing
+  # prepend --disable-authentication as the FIRST argument
+  # (so it is overridable via command line as well)
+  shift
+  set -- arangod --server.disable-authentication="$DISABLE_AUTHENTICATION" "$@"
 fi
 
 exec "$@"
