@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-DISABLE_AUTHENTICATION="true"
+AUTHENTICATION="false"
 
 function rwfail {
   echo "We seem to not have proper rw access to $1. Please make sure that every mounted volume has full rw access for user arangodb ($(id arangodb))"
@@ -43,7 +43,7 @@ if [ "$1" = 'arangod' ]; then
                     echo "require(\"org/arangodb/users\").replace(\"root\", \"$ARANGO_ROOT_PASSWORD\");"
                   ) |
                   /usr/sbin/arangod --console --log.foreground-tty false &> /dev/null
-                  DISABLE_AUTHENTICATION="false"
+                  AUTHENTICATION="true"
                 fi
                 # Initialize if not already done
                 /usr/sbin/arangod --console --database.auto-upgrade true
@@ -52,10 +52,10 @@ fi
 
 if [ "$1" == "arangod" ]; then
   # if we really want to start arangod and not bash or any other thing
-  # prepend --disable-authentication as the FIRST argument
+  # prepend --authentication as the FIRST argument
   # (so it is overridable via command line as well)
   shift
-  set -- arangod --server.disable-authentication="$DISABLE_AUTHENTICATION" "$@"
+  set -- arangod --server.authentication="$AUTHENTICATION" "$@"
 fi
 
 exec "$@"
