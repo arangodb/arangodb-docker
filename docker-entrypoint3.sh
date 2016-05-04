@@ -42,7 +42,7 @@ if [ "$1" = 'arangod' ]; then
                   (
                     echo "require(\"org/arangodb/users\").replace(\"root\", \"$ARANGO_ROOT_PASSWORD\");"
                   ) |
-                  /usr/sbin/arangod --console --log.tty "" &> /dev/null
+                  /usr/sbin/arangod --console --log.foreground-tty false &> /dev/null
                   DISABLE_AUTHENTICATION="false"
                 fi
                 # Initialize if not already done

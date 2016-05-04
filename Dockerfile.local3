@@ -6,6 +6,7 @@ RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F4
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libjemalloc1 \
+	libsnappy1 \
         ca-certificates \
         pwgen \
         wget \
