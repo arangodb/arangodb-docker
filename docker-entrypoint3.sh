@@ -45,8 +45,6 @@ if [ "$1" = 'arangod' ]; then
                   /usr/sbin/arangod --console --log.foreground-tty false &> /dev/null
                   AUTHENTICATION="true"
                 fi
-                # Initialize if not already done
-                /usr/sbin/arangod --console --database.auto-upgrade true
 	fi
 fi
 
