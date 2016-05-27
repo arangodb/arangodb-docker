@@ -3,11 +3,6 @@ set -eo pipefail
 
 AUTHENTICATION="false"
 
-function rwfail {
-  echo "We seem to not have proper rw access to $1. Please make sure that every mounted volume has full rw access for user arangodb ($(id arangodb))"
-  exit 55
-}
-
 # if command starts with an option, prepend arangod
 if [ "${1:0:1}" = '-' ]; then
 	set -- arangod "$@"
@@ -15,15 +10,16 @@ fi
 
 
 if [ "$1" = 'arangod' ]; then
-	DATADIR=/var/lib/arangodb3
-	
-        # ensure proper uid and gid (for example when volume is mounted from the outside)
-        # do NOT chown or stuff like that. when using shared folders on the mac chown is VERY likely to fail due to docker => vm => host issues
-        touch "$DATADIR"/_rwcheck_$HOSTNAME || rwfail $DATADIR
-        rm "$DATADIR"/_rwcheck_"$HOSTNAME"
-        touch /var/lib/arangodb3-apps/_rwcheck_"$HOSTNAME" || rwfail /var/lib/arangodb3-apps/
-        rm /var/lib/arangodb3-apps/_rwcheck_"$HOSTNAME"
-	if [ ! -f "$DATADIR"/SERVER ]; then
+        mkdir -p /var/lib/arangodb3
+        mkdir -p /var/lib/arangodb3-apps
+        
+        # by doing this here we explicitly break support for mounting volumes from the mac (at least for docker pre 1.11)
+        # but otherwise there will be too many problems like this https://github.com/arangodb/arangodb-docker/issues/23
+        # mysql as well as postgres are doing it exactly like this so stick to this
+        chown -R arangodb /var/lib/arangodb3
+        chown -R arangodb /var/lib/arangodb3-apps
+
+	if [ ! -f /var/lib/arangodb3/SERVER ]; then
 		if [ -z "$ARANGO_ROOT_PASSWORD" -a -z "$ARANGO_NO_AUTH" -a -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
 			echo >&2 'error: database is uninitialized and password option is not specified '
 			echo >&2 '  You need to specify one of $ARANGO_ROOT_PASSWORD, $ARANGO_NO_AUTH and $ARANGO_RANDOM_ROOT_PASSWORD'
