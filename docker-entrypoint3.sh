@@ -34,13 +34,45 @@ if [ "$1" = 'arangod' ]; then
                   echo "==========================================="
                 fi
                 
+                "$@" --server.authentication false --server.endpoint=tcp://127.0.0.1:8529 --log.output file:///tmp/init-log &>/dev/null &
+		pid="$!"
+                
+                counter=0
+                ARANGO_UP=0
+                while [ "$ARANGO_UP" = "0" ];do
+                  if [ $counter -gt 0 ];then
+                    sleep 1
+                  fi
+
+                  if [ "$counter" -gt 100 ];then
+                    echo "ArangoDB didn't start correctly during init"
+                    cat /tmp/init-log
+                    exit 1
+                  fi
+                  let counter=counter+1
+                  ARANGO_UP=1
+                  curl -s localhost:8529/_api/version &>/dev/null || ARANGO_UP=0
+                done
+
                 if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
                   (
                     echo "require(\"org/arangodb/users\").replace(\"root\", \"$ARANGO_ROOT_PASSWORD\");"
-                  ) |
-                  /usr/sbin/arangod --console --log.foreground-tty false &> /dev/null
+                  ) | arangosh &>/dev/null
                   AUTHENTICATION="true"
                 fi
+
+                echo
+		for f in /docker-entrypoint-initdb.d/*; do
+			case "$f" in
+				*.sh)     echo "$0: running $f"; . "$f" ;;
+				*.js)     echo "$0: running $f"; arangosh --javascript.execute "$f" ;;
+				*/dumps)    echo "$0: restoring databases"; for d in $f/*; do echo "restoring $d";arangorestore --server.endpoint=tcp://127.0.0.1:8529 --create-database true --include-system-collections true --input-directory $d; done; echo ;;
+			esac
+		done
+		if ! kill -s TERM "$pid" || ! wait "$pid"; then
+                  echo >&2 'ArangoDB Init failed.'
+                  exit 1
+		fi
 	fi
 fi
 

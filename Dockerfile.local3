@@ -9,11 +9,13 @@ RUN apt-get update && \
 	libsnappy1 \
         ca-certificates \
         pwgen \
-        wget \
+        curl \
     && \
     rm -rf /var/lib/apt/lists/*
 
 COPY arangodb.deb /arangodb.deb
+
+RUN mkdir /docker-entrypoint-initdb.d
 
 RUN dpkg -i arangodb.deb && \
     sed -ri \
@@ -26,7 +28,7 @@ RUN dpkg -i arangodb.deb && \
         -e 's!^#\s*gid\s*=.*!gid = arangodb!' \
         /etc/arangodb3/arangod.conf \
     && \
-    apt-get purge -y --auto-remove ca-certificates wget && \
+    apt-get purge -y --auto-remove ca-certificates && \
     rm -f /arangodb.deb
 
 # retain the database directory and the Foxx Application directory
