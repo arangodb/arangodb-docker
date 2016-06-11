@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-AUTHENTICATION="false"
+AUTHENTICATION="true"
 
 # if command starts with an option, prepend arangod
 if [ "${1:0:1}" = '-' ]; then
@@ -27,22 +27,20 @@ if [ "$1" = 'arangod' ]; then
 		fi
                 
                 if [ ! -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
-                  ARANGO_ROOT_PASSWORD=$(pwgen -s -1 16)
-                  echo "==========================================="
-                  echo "GENERATED ROOT PASSWORD: $ARANGO_ROOT_PASSWORD"
-                  echo "==========================================="
+                	ARANGO_ROOT_PASSWORD=$(pwgen -s -1 16)
+                	echo "==========================================="
+                	echo "GENERATED ROOT PASSWORD: $ARANGO_ROOT_PASSWORD"
+                	echo "==========================================="
                 fi
                 
-                echo "Initializing root user...Hang on..."
+		if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
+                	echo "Initializing root user...Hang on..."
 
-                ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" "$@" --server.authentication false \
-		     --server.endpoint=tcp://127.0.0.1:8529 \
-		     --log.file /tmp/init-log \
-		     --log.foreground-tty false \
-		     --database.init-database
-
-                if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
-                  AUTHENTICATION="true"
+                	ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" "$@" --server.authentication false \
+		       		--server.endpoint=tcp://127.0.0.1:8529 \
+		       		--log.file /tmp/init-log \
+		       		--log.foreground-tty false \
+		       		--database.init-database
                 fi
 
                 echo "Initializing database...Hang on..."
@@ -85,14 +83,17 @@ if [ "$1" = 'arangod' ]; then
 
                 echo "Database initialized...Starting System..."
 	fi
-fi
 
-if [ "$1" == "arangod" ]; then
-  # if we really want to start arangod and not bash or any other thing
-  # prepend --authentication as the FIRST argument
-  # (so it is overridable via command line as well)
-  shift
-  set -- arangod --server.authentication="$AUTHENTICATION" "$@"
+	# if we really want to start arangod and not bash or any other thing
+	# prepend --authentication as the FIRST argument
+	# (so it is overridable via command line as well)
+	shift
+
+	if [ ! -z "$ARANGO_NO_AUTH" ]; then
+		AUTHENTICATION="false"
+	fi
+
+	set -- arangod --server.authentication="$AUTHENTICATION" "$@"
 fi
 
 exec "$@"
