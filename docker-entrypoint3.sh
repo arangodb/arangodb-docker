@@ -35,12 +35,7 @@ if [ "$1" = 'arangod' ]; then
                 
 		if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
                 	echo "Initializing root user...Hang on..."
-
-                	ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" "$@" --server.authentication false \
-		       		--server.endpoint=tcp://127.0.0.1:8529 \
-		       		--log.file /tmp/init-log \
-		       		--log.foreground-tty false \
-		       		--database.init-database
+                	ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database || true
                 fi
 
                 echo "Initializing database...Hang on..."
