@@ -17,7 +17,10 @@ COPY arangodb.deb /arangodb.deb
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-RUN dpkg -i arangodb.deb && \
+RUN (echo arangodb3 arangodb/password password test | debconf-set-selections) && \
+    (echo arangodb3 arangodb/password_again password test | debconf-set-selections) && \
+    DEBIAN_FRONTEND="noninteractive" dpkg -i arangodb.deb && \
+    rm -rf /var/lib/arangodb3/* && \
     sed -ri \
 # https://docs.arangodb.com/ConfigureArango/Arangod.html
         -e 's!127\.0\.0\.1!0.0.0.0!g' \
@@ -28,7 +31,7 @@ RUN dpkg -i arangodb.deb && \
         -e 's!^#\s*gid\s*=.*!gid = arangodb!' \
         /etc/arangodb3/arangod.conf \
     && \
-    apt-get purge -y --auto-remove ca-certificates && \
+    DEBIAN_FRONTEND="noninteractive" apt-get purge -y --auto-remove ca-certificates && \
     rm -f /arangodb.deb
 
 # retain the database directory and the Foxx Application directory
