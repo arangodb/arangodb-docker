@@ -14,12 +14,27 @@ fi
 
 mkdir -p jessie/${VERSION}
 
-cat Dockerfile.templ | sed \
-    -e "s;@VERSION@;${VERSION};" \
-    > jessie/${VERSION}/Dockerfile
+case ${VERSION} in
+  3.*)
+    cat Dockerfile3.templ | sed \
+      -e "s;@VERSION@;${VERSION};" \
+      > jessie/${VERSION}/Dockerfile
+    cp docker-entrypoint3.sh jessie/${VERSION}/docker-entrypoint.sh
+    ;;
 
-cp docker-entrypoint.sh jessie/${VERSION}/docker-entrypoint.sh
+  2.*)
+    cat Dockerfile.templ | sed \
+      -e "s;@VERSION@;${VERSION};" \
+      > jessie/${VERSION}/Dockerfile
+    cp docker-entrypoint.sh jessie/${VERSION}/docker-entrypoint.sh
+    ;;
+
+  *)
+    echo "unknown version ${VERSION}"
+    exit 1
+    ;;
+esac
+
 git add jessie/${VERSION}
 git commit jessie/${VERSION} -m "Add new version ${VERSION}"
 git push
-
