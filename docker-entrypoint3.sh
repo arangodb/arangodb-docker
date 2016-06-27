@@ -34,7 +34,7 @@ if [ "$1" = 'arangod' ]; then
                   echo "==========================================="
                 fi
                 
-                "$@" --server.authentication false --server.endpoint=tcp://127.0.0.1:8529 --log.output file:///tmp/init-log &>/dev/null &
+                arangod --server.authentication false --server.endpoint=tcp://127.0.0.1:8529 --log.output file:///tmp/init-log &>/dev/null &
 		pid="$!"
                 
                 counter=0
