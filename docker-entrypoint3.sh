@@ -40,10 +40,10 @@ if [ "$1" = 'arangod' ]; then
 
                 echo "Initializing database...Hang on..."
 
-                arangod --server.authentication false \
-		     --server.endpoint=tcp://127.0.0.1:8529 \
-		     --log.file /tmp/init-log \
-		     --log.foreground-tty false &
+                arangod --server.endpoint unix:///tmp/arangodb-tmp.sock \
+                    --server.authentication false \
+		    --log.file /tmp/init-log \
+		    --log.foreground-tty false &
 		pid="$!"
 
 		counter=0
@@ -60,14 +60,14 @@ if [ "$1" = 'arangod' ]; then
 		    fi
 		    let counter=counter+1
 		    ARANGO_UP=1
-		    curl -s localhost:8529/_api/version &>/dev/null || ARANGO_UP=0
+                    echo "db._version()" | arangosh --server.endpoint=unix:///tmp/arangodb-tmp.sock || ARANGO_UP=0
 		done
 
 		for f in /docker-entrypoint-initdb.d/*; do
 			case "$f" in
 				*.sh)     echo "$0: running $f"; . "$f" ;;
 				*.js)     echo "$0: running $f"; arangosh --javascript.execute "$f" ;;
-				*/dumps)    echo "$0: restoring databases"; for d in $f/*; do echo "restoring $d";arangorestore --server.endpoint=tcp://127.0.0.1:8529 --create-database true --include-system-collections true --input-directory $d; done; echo ;;
+				*/dumps)    echo "$0: restoring databases"; for d in $f/*; do echo "restoring $d";arangorestore --server.endpoint=unix:///tmp/arangodb-tmp.sock --create-database true --include-system-collections true --input-directory $d; done; echo ;;
 			esac
 		done
 
