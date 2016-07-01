@@ -60,7 +60,7 @@ if [ "$1" = 'arangod' ]; then
 		    fi
 		    let counter=counter+1
 		    ARANGO_UP=1
-                    echo "db._version()" | arangosh --server.endpoint=unix:///tmp/arangodb-tmp.sock || ARANGO_UP=0
+                    echo "db._version()" | arangosh --server.endpoint=unix:///tmp/arangodb-tmp.sock 2>&1 > /dev/null|| ARANGO_UP=0
 		done
 
 		for f in /docker-entrypoint-initdb.d/*; do
