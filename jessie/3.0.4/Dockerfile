@@ -25,8 +25,8 @@ RUN mkdir /docker-entrypoint-initdb.d
 RUN curl -O ${ARANGO_SIGNATURE_URL} &&       \
     curl -O ${ARANGO_PACKAGE_URL} &&         \
     gpg --verify ${ARANGO_PACKAGE}.asc && \
-    (echo arangodb3 arangodb/password password test | debconf-set-selections) && \
-    (echo arangodb3 arangodb/password_again password test | debconf-set-selections) && \
+    (echo arangodb3 arangodb3/password password test | debconf-set-selections) && \
+    (echo arangodb3 arangodb3/password_again password test | debconf-set-selections) && \
     DEBIAN_FRONTEND="noninteractive" dpkg -i ${ARANGO_PACKAGE} && \
     rm -rf /var/lib/arangodb3/* && \
     sed -ri \
