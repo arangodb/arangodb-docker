@@ -22,9 +22,9 @@ RUN (echo arangodb3 arangodb/password password test | debconf-set-selections) &&
     DEBIAN_FRONTEND="noninteractive" dpkg -i arangodb.deb && \
     rm -rf /var/lib/arangodb3/* && \
     sed -ri \
-# https://docs.arangodb.com/ConfigureArango/Arangod.html
+# https://docs.arangodb.com/latest/Manual/Administration/Configuration/Endpoint.html
         -e 's!127\.0\.0\.1!0.0.0.0!g' \
-# https://docs.arangodb.com/ConfigureArango/Logging.html
+# https://docs.arangodb.com/latest/Manual/Administration/Configuration/Logging.html
         -e 's!^(file\s*=).*!\1 -!' \
 # run as arangodb:arangodb
         -e 's!^#\s*uid\s*=.*!uid = arangodb!' \
