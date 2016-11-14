@@ -15,18 +15,25 @@ fi
 mkdir -p jessie/${VERSION}
 
 case ${VERSION} in
-  3.*)
+  2.*)
+    cat Dockerfile.templ | sed \
+      -e "s;@VERSION@;${VERSION};" \
+      > jessie/${VERSION}/Dockerfile
+    cp docker-entrypoint.sh jessie/${VERSION}/docker-entrypoint.sh
+    ;;
+
+  3.0.*)
     cat Dockerfile3.templ | sed \
       -e "s;@VERSION@;${VERSION};" \
       > jessie/${VERSION}/Dockerfile
     cp docker-entrypoint3.sh jessie/${VERSION}/docker-entrypoint.sh
     ;;
 
-  2.*)
-    cat Dockerfile.templ | sed \
+  3.*)
+    cat Dockerfile31.templ | sed \
       -e "s;@VERSION@;${VERSION};" \
       > jessie/${VERSION}/Dockerfile
-    cp docker-entrypoint.sh jessie/${VERSION}/docker-entrypoint.sh
+    cp docker-entrypoint3.sh jessie/${VERSION}/docker-entrypoint.sh
     ;;
 
   *)
