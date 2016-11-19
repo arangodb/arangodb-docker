@@ -48,19 +48,23 @@ if [ "$1" = 'arangod' ]; then
 
 		counter=0
 		ARANGO_UP=0
-		while [ "$ARANGO_UP" = "0" ];do
-		    if [ $counter -gt 0 ];then
+
+		while [ "$ARANGO_UP" = "0" ]; do
+		    if [ $counter -gt 0 ]; then
 			sleep 1
 		    fi
 
-		    if [ "$counter" -gt 100 ];then
+		    if [ "$counter" -gt 100 ]; then
 			echo "ArangoDB didn't start correctly during init"
 			cat /tmp/init-log
 			exit 1
 		    fi
 		    let counter=counter+1
 		    ARANGO_UP=1
-                    echo "db._version()" | arangosh --server.endpoint=unix:///tmp/arangodb-tmp.sock 2>&1 > /dev/null|| ARANGO_UP=0
+                    arangosh --server.endpoint=unix:///tmp/arangodb-tmp.sock \
+                        --server.authentication false \
+                        --javascript.execute-string "db._version()" \
+                        > /dev/null 2>&1 || ARANGO_UP=0
 		done
 
 		for f in /docker-entrypoint-initdb.d/*; do
