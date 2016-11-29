@@ -17,8 +17,8 @@ COPY arangodb.deb /arangodb.deb
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-RUN (echo arangodb3 arangodb/password password test | debconf-set-selections) && \
-    (echo arangodb3 arangodb/password_again password test | debconf-set-selections) && \
+RUN (echo arangodb3 arangodb3/password password test | debconf-set-selections) && \
+    (echo arangodb3 arangodb3/password_again password test | debconf-set-selections) && \
     DEBIAN_FRONTEND="noninteractive" dpkg -i arangodb.deb && \
     rm -rf /var/lib/arangodb3/* && \
     sed -ri \
