@@ -2,7 +2,7 @@ FROM debian:jessie
 MAINTAINER Frank Celler <info@arangodb.com>
 
 ENV ARCHITECTURE amd64
-ENV DEB_PACKAGE_VERSION 1
+ENV DEB_PACKAGE_VERSION 2
 ENV ARANGO_VERSION 3.1.10
 ENV ARANGO_URL https://www.arangodb.com/repositories/arangodb31/Debian_8.0
 ENV ARANGO_PACKAGE arangodb3-${ARANGO_VERSION}-${DEB_PACKAGE_VERSION}_${ARCHITECTURE}.deb
