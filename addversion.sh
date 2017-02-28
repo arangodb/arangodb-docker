@@ -32,6 +32,7 @@ case ${VERSION} in
   3.*)
     cat Dockerfile31.templ | sed \
       -e "s;@VERSION@;${VERSION};" \
+      -e "s;@REPO_TL_DIR@;${REPO_TL_DIR};" \
       > jessie/${VERSION}/Dockerfile
     cp docker-entrypoint3.sh jessie/${VERSION}/docker-entrypoint.sh
     ;;
