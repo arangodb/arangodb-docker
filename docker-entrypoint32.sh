@@ -22,9 +22,13 @@ if [ "$1" = 'arangod' ]; then
     if [ ! -f /var/lib/arangodb3/SERVER ]; then
 
         if [ "$ARANGO_STORAGE_ENGINE" == "rocksdb" ]; then
+            echo "choosing Rocksdb storage engine"
             sed -i /etc/arangodb3/arangod.conf -e "s;storage-engine = auto;storage-engine = rocksdb;"
         elif [ "$ARANGO_STORAGE_ENGINE" == "mmfiles" ]; then
+            echo "choosing MMFiles storage engine"
             sed -i /etc/arangodb3/arangod.conf -e "s;storage-engine = auto;storage-engine = mmfiles;"
+        else
+            echo "automaticaly choosing storage engine"
         fi
 
 	if [ -z "$ARANGO_ROOT_PASSWORD" ] && [ -z "$ARANGO_NO_AUTH" ] && [ -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then

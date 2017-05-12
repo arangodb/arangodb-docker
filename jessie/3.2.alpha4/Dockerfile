@@ -23,8 +23,8 @@ RUN apt-get update && \
 
 RUN mkdir /docker-entrypoint-initdb.d
 
-RUN curl -O ${ARANGO_SIGNATURE_URL} &&       \
-    curl -O ${ARANGO_PACKAGE_URL} &&         \
+RUN curl --fail -O ${ARANGO_SIGNATURE_URL} &&       \
+    curl --fail -O ${ARANGO_PACKAGE_URL} &&         \
     gpg --verify ${ARANGO_PACKAGE}.asc && \
     (echo arangodb3 arangodb3/password password test | debconf-set-selections) && \
     (echo arangodb3 arangodb3/password_again password test | debconf-set-selections) && \
