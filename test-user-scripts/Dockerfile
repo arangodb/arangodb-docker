@@ -1,4 +1,4 @@
-FROM arangodb/arangodb
+FROM arangodb/testdrivearangodocker
 MAINTAINER Frank Celler <info@arangodb.com>
 
 COPY test.js /docker-entrypoint-initdb.d
