@@ -33,6 +33,9 @@ if [ "$1" = 'arangod' ]; then
                 	echo "==========================================="
                 fi
                 
+		if [ -f "$ARANGO_ROOT_PASSWORD_FILE" ]; then
+			ARANGO_ROOT_PASSWORD="$(cat $ARANGO_ROOT_PASSWORD_FILE)"
+		fi
 		if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
                 	echo "Initializing root user...Hang on..."
                 	ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database || true

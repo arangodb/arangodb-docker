@@ -31,6 +31,9 @@ if [ "$1" = 'arangod' ]; then
             echo "automaticaly choosing storage engine"
         fi
 
+	if [ -f "$ARANGO_ROOT_PASSWORD_FILE" ]; then
+	    ARANGO_ROOT_PASSWORD="$(cat $ARANGO_ROOT_PASSWORD_FILE)"
+	fi
 	if [ -z "$ARANGO_ROOT_PASSWORD" ] && [ -z "$ARANGO_NO_AUTH" ] && [ -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
 	    echo >&2 'error: database is uninitialized and password option is not specified '
 	    echo >&2 "  You need to specify one of $ARANGO_ROOT_PASSWORD, $ARANGO_NO_AUTH and $ARANGO_RANDOM_ROOT_PASSWORD"
