@@ -36,7 +36,7 @@ if [ "$1" = 'arangod' ]; then
 	fi
 	if [ -z "$ARANGO_ROOT_PASSWORD" ] && [ -z "$ARANGO_NO_AUTH" ] && [ -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
 	    echo >&2 'error: database is uninitialized and password option is not specified '
-	    echo >&2 "  You need to specify one of $ARANGO_ROOT_PASSWORD, $ARANGO_NO_AUTH and $ARANGO_RANDOM_ROOT_PASSWORD"
+	    echo >&2 "  You need to specify one of ARANGO_ROOT_PASSWORD, ARANGO_NO_AUTH and ARANGO_RANDOM_ROOT_PASSWORD"
 	    exit 1
 	fi
         
@@ -50,6 +50,10 @@ if [ "$1" = 'arangod' ]; then
 	if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
             echo "Initializing root user...Hang on..."
             ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database || true
+            export ARANGO_ROOT_PASSWORD
+            ARANGOSH_ARGS=" --server.password ${ARANGO_ROOT_PASSWORD} "
+        else
+            ARANGOSH_ARGS=" --server.authentication false"
         fi
 
         echo "Initializing database...Hang on..."
@@ -75,10 +79,11 @@ if [ "$1" = 'arangod' ]; then
 	    fi
 	    let counter=counter+1
 	    ARANGO_UP=1
-            arangosh --server.endpoint=unix:///tmp/arangodb-tmp.sock \
-                     --server.authentication false \
-                     --javascript.execute-string "db._version()" \
-                     > /dev/null 2>&1 || ARANGO_UP=0
+            arangosh \
+                --server.endpoint=unix:///tmp/arangodb-tmp.sock \
+                --server.authentication false \
+                --javascript.execute-string "db._version()" \
+                > /dev/null 2>&1 || ARANGO_UP=0
 	done
 
 	for f in /docker-entrypoint-initdb.d/*; do
@@ -89,17 +94,22 @@ if [ "$1" = 'arangod' ]; then
                     ;;
 		*.js)
                     echo "$0: running $f"
-                    arangosh --javascript.execute "$f"
+                    arangosh ${ARANGOSH_ARGS} \
+                             --server.endpoint=unix:///tmp/arangodb-tmp.sock \
+                             --javascript.execute "$f"
                     ;;
 		*/dumps)
-                    echo "$0: restoring databases";
+                    echo "$0: restoring databases"
                     for d in $f/*; do
-                        echo "restoring $d";
+                        DBName=$(echo ${d}|sed "s;$f/;;")
+                        echo "restoring $d into ${DBName}";
                         arangorestore \
+                            ${ARANGOSH_ARGS} \
                             --server.endpoint=unix:///tmp/arangodb-tmp.sock \
                             --create-database true \
                             --include-system-collections true \
-                            --input-directory "$d";
+                            --server.database "$DBName" \
+                            --input-directory "$d"
                     done
                     echo
                     ;;
