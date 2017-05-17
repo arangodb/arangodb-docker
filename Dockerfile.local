@@ -23,7 +23,6 @@ RUN dpkg -i arangodb.deb && \
         -e 's!^#\s*gid\s*=.*!gid = arangodb!' \
         /etc/arangodb/arangod.conf \
     && \
-    apt-get purge -y --auto-remove ca-certificates wget && \
     rm -f /arangodb.deb
 
 # retain the database directory and the Foxx Application directory

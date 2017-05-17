@@ -40,7 +40,6 @@ RUN curl --fail -O ${ARANGO_SIGNATURE_URL} &&       \
         -e 's!^#\s*gid\s*=.*!gid = arangodb!' \
         /etc/arangodb3/arangod.conf \
     && \
-    DEBIAN_FRONTEND="noninteractive" apt-get purge -y --auto-remove ca-certificates && \
     rm -f ${ARANGO_PACKAGE}*
 
 # retain the database directory and the Foxx Application directory

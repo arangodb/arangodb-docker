@@ -29,7 +29,6 @@ RUN (echo arangodb3 arangodb3/password password test | debconf-set-selections) &
         -e 's!^#\s*gid\s*=.*!gid = arangodb!' \
         /etc/arangodb3/arangod.conf \
     && \
-    DEBIAN_FRONTEND="noninteractive" apt-get purge -y --auto-remove ca-certificates && \
     rm -f /arangodb.deb
 
 # retain the database directory and the Foxx Application directory

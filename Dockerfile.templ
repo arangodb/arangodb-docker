@@ -32,7 +32,7 @@ RUN apt-get update && \
         -e 's!^#\s*gid\s*=.*!gid = arangodb!' \
         /etc/arangodb/arangod.conf \
     && \
-    apt-get purge -y --auto-remove ca-certificates wget && \
+    apt-get purge -y --auto-remove wget && \
     rm -f ${ARANGO_PACKAGE}*
 
 RUN chown arangodb:arangodb /var/lib/arangodb && \
