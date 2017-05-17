@@ -1,0 +1,1 @@
+{"data":{"_id":"_graphs/knows_graph","_key":"knows_graph","_rev":"_V_UU4xe---","edgeDefinitions":[{"collection":"knows","from":["persons"],"to":["persons"]}],"orphanCollections":[]},"type":2300}

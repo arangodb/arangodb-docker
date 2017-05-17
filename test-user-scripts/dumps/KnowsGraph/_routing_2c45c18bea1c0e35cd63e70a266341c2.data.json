@@ -1,0 +1,3 @@
+{"data":{"_id":"_routing/61652","_key":"61652","_rev":"_V_UUa3i---","action":{"do":"@arangodb/actions/redirectRequest","options":{"destination":"/_db/test/_admin/aardvark/index.html","permanently":true}},"priority":-1000000,"url":"/"},"type":2300}
+{"data":{"_id":"_routing/61654","_key":"61654","_rev":"_V_UUa3i--A","action":{"do":"@arangodb/actions/redirectRequest","options":{"destination":"/_db/test/_admin/aardvark/index.html","permanently":true}},"priority":-1000000,"url":"/_admin/html"},"type":2300}
+{"data":{"_id":"_routing/61656","_key":"61656","_rev":"_V_UUa3i--B","action":{"do":"@arangodb/actions/redirectRequest","options":{"destination":"/_db/test/_admin/aardvark/index.html","permanently":true}},"priority":-1000000,"url":"/_admin/html/index.html"},"type":2300}

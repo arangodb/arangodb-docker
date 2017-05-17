@@ -1,0 +1,5 @@
+{"data":{"_id":"persons/alice","_key":"alice","_rev":"_V_UU4x6---","name":"Alice"},"type":2300}
+{"data":{"_id":"persons/bob","_key":"bob","_rev":"_V_UU4y----","name":"Bob"},"type":2300}
+{"data":{"_id":"persons/charlie","_key":"charlie","_rev":"_V_UU4y---_","name":"Charlie"},"type":2300}
+{"data":{"_id":"persons/dave","_key":"dave","_rev":"_V_UU4y---A","name":"Dave"},"type":2300}
+{"data":{"_id":"persons/eve","_key":"eve","_rev":"_V_UU4y---B","name":"Eve"},"type":2300}

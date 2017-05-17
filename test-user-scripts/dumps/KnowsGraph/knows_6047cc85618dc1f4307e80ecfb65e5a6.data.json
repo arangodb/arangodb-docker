@@ -1,0 +1,5 @@
+{"data":{"_from":"persons/alice","_id":"knows/61742","_key":"61742","_rev":"_V_UU4yC---","_to":"persons/bob"},"type":2300}
+{"data":{"_from":"persons/bob","_id":"knows/61744","_key":"61744","_rev":"_V_UU4yG---","_to":"persons/charlie"},"type":2300}
+{"data":{"_from":"persons/bob","_id":"knows/61746","_key":"61746","_rev":"_V_UU4yG--_","_to":"persons/dave"},"type":2300}
+{"data":{"_from":"persons/eve","_id":"knows/61748","_key":"61748","_rev":"_V_UU4yK---","_to":"persons/alice"},"type":2300}
+{"data":{"_from":"persons/eve","_id":"knows/61750","_key":"61750","_rev":"_V_UU4yK--_","_to":"persons/bob"},"type":2300}
