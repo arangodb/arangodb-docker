@@ -19,13 +19,13 @@ if [ "$1" = 'arangod' ]; then
     chown -R arangodb /var/lib/arangodb3
     chown -R arangodb /var/lib/arangodb3-apps
 
-    if [ ! -f /var/lib/arangodb3/SERVER ]; then
+    if [ ! -z "$ARANGO_ENCRYPTION_KEYFILE" ]; then
+        echo "Using encrypted database"
+        sed -i /etc/arangodb3/arangod.conf -e "s;^.*encryption-keyfile.*;encryption-keyfile=$ARANGO_ENCRYPTION_KEYFILE;"
+        ARANGO_STORAGE_ENGINE=rocksdb
+    fi
 
-        if [ ! -z "$ARANGO_ENCRYPTION_KEYFILE" ]; then
-            echo "Using encrypted database"
-            sed -i /etc/arangodb3/arangod.conf -e "s;^.*encryption-keyfile.*;encryption-keyfile=$ARANGO_ENCRYPTION_KEYFILE;"
-            ARANGO_STORAGE_ENGINE=rocksdb
-        fi
+    if [ ! -f /var/lib/arangodb3/SERVER ]; then
 
         if [ "$ARANGO_STORAGE_ENGINE" == "rocksdb" ]; then
             echo "choosing Rocksdb storage engine"
