@@ -23,7 +23,7 @@ if [ "$1" = 'arangod' ]; then
 
         if [ ! -z "$ARANGO_ENCRYPTION_KEYFILE" ]; then
             echo "Using encrypted database"
-            ARANGODB_ARGS=" --rocksdb.encryption-keyfile=$ARANGO_ENCRYPTION_KEYFILE"
+            sed -i /etc/arangodb3/arangod.conf -e "s;^.*encryption-keyfile.*;encryption-keyfile=$ARANGO_ENCRYPTION_KEYFILE;"
             ARANGO_STORAGE_ENGINE=rocksdb
         fi
 
@@ -67,7 +67,7 @@ if [ "$1" = 'arangod' ]; then
         arangod --server.endpoint unix:///tmp/arangodb-tmp.sock \
                 --server.authentication false \
 		--log.file /tmp/init-log \
-		--log.foreground-tty true $ARANGODB_ARGS &
+		--log.foreground-tty false &
 	pid="$!"
 
 	counter=0
@@ -139,7 +139,7 @@ if [ "$1" = 'arangod' ]; then
 	AUTHENTICATION="false"
     fi
 
-    set -- arangod --server.authentication="$AUTHENTICATION" $ARANGODB_ARGS "$@"
+    set -- arangod --server.authentication="$AUTHENTICATION" "$@"
 fi
 
 exec "$@"
