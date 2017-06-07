@@ -2,6 +2,7 @@
 set -eo pipefail
 
 AUTHENTICATION="true"
+export GLIBCXX_FORCE_NEW=1
 
 # if command starts with an option, prepend arangod
 if [ "${1:0:1}" = '-' ]; then
