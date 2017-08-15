@@ -7,50 +7,62 @@ if test -z "${VERSION}" ; then
     exit 1
 fi
 
-if test -d "jessie/${VERSION}"; then 
-    echo "there already is jessie/${VERSION}! Exit now."
+if test -d "stretch/${VERSION}" -o -d "jessie/${VERSION}"; then 
+    echo "there already is stretch / jessie ${VERSION}! Exit now."
     exit
 fi
 
-mkdir -p jessie/${VERSION}
+mkdir -p stretch/${VERSION}
 
 case ${VERSION} in
-  2.*)
-    cat Dockerfile.templ | sed \
-      -e "s;@VERSION@;${VERSION};" \
-      > jessie/${VERSION}/Dockerfile
-    cp docker-entrypoint.sh jessie/${VERSION}/docker-entrypoint.sh
-    ;;
+    2.*)
+        DEB_VERSION=jessie
+        cat Dockerfile.templ | sed \
+                                   -e "s;@VERSION@;${VERSION};" \
+                                   > ${DEB_VERSION}/${VERSION}/Dockerfile
+        cp docker-entrypoint.sh ${DEB_VERSION}/${VERSION}/docker-entrypoint.sh
+        ;;
 
-  3.0.*)
-    cat Dockerfile3.templ | sed \
-      -e "s;@VERSION@;${VERSION};" \
-      > jessie/${VERSION}/Dockerfile
-    cp docker-entrypoint3.sh jessie/${VERSION}/docker-entrypoint.sh
-    ;;
+    3.0.*)
+        DEB_VERSION=jessie
+        cat Dockerfile3.templ | sed \
+                                    -e "s;@VERSION@;${VERSION};" \
+                                    > ${DEB_VERSION}/${VERSION}/Dockerfile
+        cp docker-entrypoint3.sh ${DEB_VERSION}/${VERSION}/docker-entrypoint.sh
+        ;;
 
-  3.1.*)
-    cat Dockerfile31.templ | sed \
-      -e "s;@VERSION@;${VERSION};" \
-      -e "s;@REPO_TL_DIR@;${REPO_TL_DIR};" \
-      > jessie/${VERSION}/Dockerfile
-    cp docker-entrypoint3.sh jessie/${VERSION}/docker-entrypoint.sh
-    ;;
+    3.1.*)
+        if test -z "${REPO_TL_DIR}"; then
+            echo "REPO_TL_DIR environment variable missing"
+            exit 1
+        fi
+        DEB_VERSION=jessie
+        cat Dockerfile31.templ | sed \
+                                     -e "s;@VERSION@;${VERSION};" \
+                                     -e "s;@REPO_TL_DIR@;${REPO_TL_DIR};" \
+                                     > ${DEB_VERSION}/${VERSION}/Dockerfile
+        cp docker-entrypoint3.sh ${DEB_VERSION}/${VERSION}/docker-entrypoint.sh
+        ;;
 
-  3.*)
-    cat Dockerfile32.templ | sed \
-      -e "s;@VERSION@;${VERSION};" \
-      -e "s;@REPO_TL_DIR@;${REPO_TL_DIR};" \
-      > jessie/${VERSION}/Dockerfile
-    cp docker-entrypoint32.sh jessie/${VERSION}/docker-entrypoint.sh
-    ;;
+    3.*)
+        if test -z "${REPO_TL_DIR}"; then
+            echo "REPO_TL_DIR environment variable missing"
+            exit 1
+        fi
+        DEB_VERSION=stretch
+        cat Dockerfile32.templ | sed \
+                                     -e "s;@VERSION@;${VERSION};" \
+                                     -e "s;@REPO_TL_DIR@;${REPO_TL_DIR};" \
+                                     > ${DEB_VERSION}/${VERSION}/Dockerfile
+        cp docker-entrypoint32.sh ${DEB_VERSION}/${VERSION}/docker-entrypoint.sh
+        ;;
 
-  *)
-    echo "unknown version ${VERSION}"
-    exit 1
-    ;;
+    *)
+        echo "unknown version ${VERSION}"
+        exit 1
+        ;;
 esac
 
-git add jessie/${VERSION}
-git commit jessie/${VERSION} -m "Add new version ${VERSION}"
+git add ${DEB_VERSION}/${VERSION}
+git commit ${DEB_VERSION}/${VERSION} -m "Add new version ${VERSION}"
 git push

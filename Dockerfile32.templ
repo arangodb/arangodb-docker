@@ -1,20 +1,24 @@
-FROM debian:jessie
+FROM debian:stretch
 MAINTAINER Frank Celler <info@arangodb.com>
 
 ENV ARCHITECTURE amd64
 ENV DEB_PACKAGE_VERSION 1
 ENV ARANGO_VERSION @VERSION@
-ENV ARANGO_URL https://www.arangodb.com/repositories/@REPO_TL_DIR@/Debian_8.0
+ENV ARANGO_URL https://www.arangodb.com/repositories/@REPO_TL_DIR@/Debian_9.0
 ENV ARANGO_PACKAGE arangodb3-${ARANGO_VERSION}-${DEB_PACKAGE_VERSION}_${ARCHITECTURE}.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARCHITECTURE}/${ARANGO_PACKAGE}
 ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
 
-RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gpg dirmngr \
+    && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN gpg --keyserver hkps://hkps.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libjemalloc1 \
-	libsnappy1 \
         ca-certificates \
         pwgen \
         curl \
