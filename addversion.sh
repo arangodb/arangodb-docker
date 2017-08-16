@@ -36,14 +36,15 @@ case ${VERSION} in
             echo "REPO_TL_DIR environment variable missing"
             exit 1
         fi
-        DEB_VERSION=jessie
+        DEB_VERSION=stretch
         cat Dockerfile31.templ | sed \
                                      -e "s;@VERSION@;${VERSION};" \
                                      -e "s;@REPO_TL_DIR@;${REPO_TL_DIR};" \
                                      > ${DEB_VERSION}/${VERSION}/Dockerfile
         cp docker-entrypoint3.sh ${DEB_VERSION}/${VERSION}/docker-entrypoint.sh
         ;;
-
+    
+    devel)
     3.*)
         if test -z "${REPO_TL_DIR}"; then
             echo "REPO_TL_DIR environment variable missing"
