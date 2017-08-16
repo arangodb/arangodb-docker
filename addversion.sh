@@ -44,8 +44,7 @@ case ${VERSION} in
         cp docker-entrypoint3.sh ${DEB_VERSION}/${VERSION}/docker-entrypoint.sh
         ;;
     
-    devel)
-    3.*)
+    devel|3.*)
         if test -z "${REPO_TL_DIR}"; then
             echo "REPO_TL_DIR environment variable missing"
             exit 1
