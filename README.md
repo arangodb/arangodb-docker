@@ -22,3 +22,5 @@ This will create an image named `arangodb`.
 For user documentation please refer to our official docker hub documentation:
 
 https://hub.docker.com/_/arangodb/
+
+## Changing the base distribution

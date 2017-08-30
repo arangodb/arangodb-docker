@@ -5,7 +5,7 @@ RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F4
 
 ENV ARCHITECTURE amd64
 ENV ARANGO_VERSION 2.7.2
-ENV ARANGO_URL https://www.arangodb.com/repositories/arangodb2/Debian_8.0
+ENV ARANGO_URL https://download.arangodb.com/repositories/arangodb2/Debian_8.0
 ENV ARANGO_PACKAGE arangodb_${ARANGO_VERSION}_${ARCHITECTURE}.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARCHITECTURE}/${ARANGO_PACKAGE}
 ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
