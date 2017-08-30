@@ -39,14 +39,14 @@ else
         | grep -v "${GITBRANCH}" > /tmp/docker_library_template
 fi
 
-echo "${GITBRANCH}: git://github.com/arangodb/arangodb-docker@${RELEASE_VERSION} stretch/${GITTAG}" >> /tmp/docker_library_template
-echo "${GITTAG}: git://github.com/arangodb/arangodb-docker@${RELEASE_VERSION} stretch/${GITTAG}" >> /tmp/docker_library_template
+echo "${GITBRANCH}: https://github.com/arangodb/arangodb-docker@${RELEASE_VERSION} stretch/${GITTAG}" >> /tmp/docker_library_template
+echo "${GITTAG}: https://github.com/arangodb/arangodb-docker@${RELEASE_VERSION} stretch/${GITTAG}" >> /tmp/docker_library_template
 
 if grep -q latest /tmp/docker_library_template ; then
     echo "This is not our newest branch. - thus this is not going to change the LATEST entry."
 else
     echo "Adding this version as the LATEST entry:"
-    echo "latest: git://github.com/arangodb/arangodb-docker@${RELEASE_VERSION} stretch/${GITTAG}" >> /tmp/docker_library_template
+    echo "latest: https://github.com/arangodb/arangodb-docker@${RELEASE_VERSION} stretch/${GITTAG}" >> /tmp/docker_library_template
 fi
 
 echo "the official docker library file 'library/arangodb' is now: "
