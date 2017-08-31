@@ -3,7 +3,7 @@ MAINTAINER Frank Celler <info@arangodb.com>
 
 ENV ARCHITECTURE amd64
 ENV ARANGO_VERSION 3.0.12
-ENV ARANGO_URL https://download.arangodb.com/repositories/arangodb3/Debian_8.0
+ENV ARANGO_URL https://download.arangodb.com/arangodb3/Debian_8.0
 ENV ARANGO_PACKAGE arangodb3_${ARANGO_VERSION}_${ARCHITECTURE}.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARCHITECTURE}/${ARANGO_PACKAGE}
 ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
