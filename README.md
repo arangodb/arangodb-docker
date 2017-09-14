@@ -24,3 +24,5 @@ For user documentation please refer to our official docker hub documentation:
 https://hub.docker.com/_/arangodb/
 
 ## Changing the base distribution
+
+The integration and the release flow this repository is involved in is documented here: https://github.com/arangodb/documents/blob/master/Core/arangodb_docker.md
