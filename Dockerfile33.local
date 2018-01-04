@@ -14,16 +14,17 @@ COPY arangodb.deb /arangodb.deb
 
 RUN mkdir /docker-entrypoint-initdb.d
 
+# see
+#   https://docs.arangodb.com/latest/Manual/Administration/Configuration/Endpoint.html
+#   https://docs.arangodb.com/latest/Manual/Administration/Configuration/Logging.html
+
 RUN (echo arangodb3 arangodb3/password password test | debconf-set-selections) && \
     (echo arangodb3 arangodb3/password_again password test | debconf-set-selections) && \
     DEBIAN_FRONTEND="noninteractive" dpkg -i arangodb.deb && \
     rm -rf /var/lib/arangodb3/* && \
     sed -ri \
-# https://docs.arangodb.com/latest/Manual/Administration/Configuration/Endpoint.html
         -e 's!127\.0\.0\.1!0.0.0.0!g' \
-# https://docs.arangodb.com/latest/Manual/Administration/Configuration/Logging.html
         -e 's!^(file\s*=).*!\1 -!' \
-# run as arangodb:arangodb
         -e 's!^#\s*uid\s*=.*!uid = arangodb!' \
         -e 's!^#\s*gid\s*=.*!gid = arangodb!' \
         /etc/arangodb3/arangod.conf \
