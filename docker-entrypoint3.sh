@@ -20,7 +20,7 @@ if [ "$1" = 'arangod' ]; then
     chown -R arangodb /var/lib/arangodb3-apps
 
     if [ ! -f /var/lib/arangodb3/SERVER ]; then
-	if [ -z "$ARANGO_ROOT_PASSWORD" -a -z "$ARANGO_NO_AUTH" -a -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
+	if [ -z "${ARANGO_ROOT_PASSWORD+x}" -a -z "$ARANGO_NO_AUTH" -a -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
 	    echo >&2 'error: database is uninitialized and password option is not specified '
 	    echo >&2 '  You need to specify one of ARANGO_ROOT_PASSWORD, ARANGO_NO_AUTH and ARANGO_RANDOM_ROOT_PASSWORD'
 	    exit 1
@@ -37,11 +37,14 @@ if [ "$1" = 'arangod' ]; then
             echo "==========================================="
         fi
         
-	if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
+	if [ ! -z "${ARANGO_ROOT_PASSWORD+x}" ]; then
             echo "Initializing root user...Hang on..."
             ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database || true
             export ARANGO_ROOT_PASSWORD
-            ARANGOSH_ARGS=" --server.password ${ARANGO_ROOT_PASSWORD} "
+
+            if [ ! -z "${ARANGO_ROOT_PASSWORD}" ]; then
+                ARANGOSH_ARGS=" --server.password ${ARANGO_ROOT_PASSWORD} "
+            fi
         else
             ARANGOSH_ARGS=" --server.authentication false"
         fi

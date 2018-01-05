@@ -27,6 +27,11 @@ RUN apt-get update && \
 
 RUN mkdir /docker-entrypoint-initdb.d
 
+# see
+#   https://docs.arangodb.com/latest/Manual/Administration/Configuration/Endpoint.html
+#   https://docs.arangodb.com/latest/Manual/Administration/Configuration/Logging.html
+# run as arangodb:arangodb
+
 RUN curl --fail -O ${ARANGO_SIGNATURE_URL} &&       \
     curl --fail -O ${ARANGO_PACKAGE_URL} &&         \
     gpg --verify ${ARANGO_PACKAGE}.asc && \
@@ -35,11 +40,8 @@ RUN curl --fail -O ${ARANGO_SIGNATURE_URL} &&       \
     DEBIAN_FRONTEND="noninteractive" dpkg -i ${ARANGO_PACKAGE} && \
     rm -rf /var/lib/arangodb3/* && \
     sed -ri \
-# https://docs.arangodb.com/latest/Manual/Administration/Configuration/Endpoint.html
         -e 's!127\.0\.0\.1!0.0.0.0!g' \
-# https://docs.arangodb.com/latest/Manual/Administration/Configuration/Logging.html
         -e 's!^(file\s*=).*!\1 -!' \
-# run as arangodb:arangodb
         -e 's!^#\s*uid\s*=.*!uid = arangodb!' \
         -e 's!^#\s*gid\s*=.*!gid = arangodb!' \
         /etc/arangodb3/arangod.conf \

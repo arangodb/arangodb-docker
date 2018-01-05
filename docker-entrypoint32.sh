@@ -38,7 +38,7 @@ if [ "$1" = 'arangod' ]; then
         if [ -f "$ARANGO_ROOT_PASSWORD_FILE" ]; then
             ARANGO_ROOT_PASSWORD="$(cat $ARANGO_ROOT_PASSWORD_FILE)"
         fi
-        if [ -z "$ARANGO_ROOT_PASSWORD" ] && [ -z "$ARANGO_NO_AUTH" ] && [ -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
+        if [ -z "${ARANGO_ROOT_PASSWORD+x}" ] && [ -z "$ARANGO_NO_AUTH" ] && [ -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
             echo >&2 'error: database is uninitialized and password option is not specified '
             echo >&2 "  You need to specify one of ARANGO_ROOT_PASSWORD, ARANGO_NO_AUTH and ARANGO_RANDOM_ROOT_PASSWORD"
             exit 1
@@ -51,11 +51,14 @@ if [ "$1" = 'arangod' ]; then
             echo "==========================================="
         fi
         
-	    if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
+	    if [ ! -z "${ARANGO_ROOT_PASSWORD+x}" ]; then
             echo "Initializing root user...Hang on..."
             ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database || true
             export ARANGO_ROOT_PASSWORD
-            ARANGOSH_ARGS=" --server.password ${ARANGO_ROOT_PASSWORD} "
+        
+            if [ ! -z "${ARANGO_ROOT_PASSWORD}" ]; then
+                ARANGOSH_ARGS=" --server.password ${ARANGO_ROOT_PASSWORD} "
+            fi
         else
             ARANGOSH_ARGS=" --server.authentication false"
         fi

@@ -27,7 +27,7 @@ if [ "$1" = 'arangod' ]; then
 	if [ -f "$ARANGO_ROOT_PASSWORD_FILE" ]; then
 	    ARANGO_ROOT_PASSWORD="$(cat $ARANGO_ROOT_PASSWORD_FILE)"
 	fi
-	if [ -z "$ARANGO_ROOT_PASSWORD" -a -z "$ARANGO_NO_AUTH" -a -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
+	if [ -z "${ARANGO_ROOT_PASSWORD+x}" -a -z "$ARANGO_NO_AUTH" -a -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
 	    echo >&2 'error: database is uninitialized and password option is not specified '
 	    echo >&2 '  You need to specify one of $ARANGO_ROOT_PASSWORD, $ARANGO_NO_AUTH and $ARANGO_RANDOM_ROOT_PASSWORD'
 	    exit 1
@@ -41,7 +41,7 @@ if [ "$1" = 'arangod' ]; then
             echo "==========================================="
         fi
         
-        if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
+        if [ ! -z "${ARANGO_ROOT_PASSWORD+x}" ]; then
             (
                 echo "require(\"org/arangodb/users\").replace(\"root\", \"$ARANGO_ROOT_PASSWORD\");"
             ) |
