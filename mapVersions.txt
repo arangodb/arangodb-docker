@@ -3,4 +3,4 @@
 3.2;Dockerfile32.local;docker-entrypoint32.sh
 3.3;Dockerfile33.local;docker-entrypoint33.sh
 3.4;Dockerfile34.local;docker-entrypoint34.sh
-devel;Dockerfile34.local;docker-entrypoint33.sh
+devel;Dockerfile34.local;docker-entrypoint34.sh
