@@ -27,6 +27,10 @@ RUN apt-get update && \
 
 RUN mkdir /docker-entrypoint-initdb.d
 
+# see
+#   https://docs.arangodb.com/latest/Manual/Administration/Configuration/Endpoint.html
+#   https://docs.arangodb.com/latest/Manual/Administration/Configuration/Logging.html
+
 RUN curl --fail -O ${ARANGO_SIGNATURE_URL} &&       \
     curl --fail -O ${ARANGO_PACKAGE_URL} &&         \
     gpg --verify ${ARANGO_PACKAGE}.asc && \
@@ -35,16 +39,16 @@ RUN curl --fail -O ${ARANGO_SIGNATURE_URL} &&       \
     DEBIAN_FRONTEND="noninteractive" dpkg -i ${ARANGO_PACKAGE} && \
     rm -rf /var/lib/arangodb3/* && \
     sed -ri \
-# https://docs.arangodb.com/latest/Manual/Administration/Configuration/Endpoint.html
         -e 's!127\.0\.0\.1!0.0.0.0!g' \
-# https://docs.arangodb.com/latest/Manual/Administration/Configuration/Logging.html
         -e 's!^(file\s*=).*!\1 -!' \
-# run as arangodb:arangodb
-        -e 's!^#\s*uid\s*=.*!uid = arangodb!' \
-        -e 's!^#\s*gid\s*=.*!gid = arangodb!' \
+        -e 's!^\s*uid\s*=.*!!' \
         /etc/arangodb3/arangod.conf \
+    && chgrp 0 /var/lib/arangodb3 /var/lib/arangodb3-apps \
+    && chmod 775 /var/lib/arangodb3 /var/lib/arangodb3-apps \
     && \
     rm -f ${ARANGO_PACKAGE}*
+# Note that Openshift runs containers by default with a random UID and GID 0.
+# We need that the database and apps directory are writable for this config.
 
 # retain the database directory and the Foxx Application directory
 VOLUME ["/var/lib/arangodb3", "/var/lib/arangodb3-apps"]
