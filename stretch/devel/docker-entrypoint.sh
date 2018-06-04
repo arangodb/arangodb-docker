@@ -10,35 +10,33 @@ if [ "${1:0:1}" = '-' ]; then
 fi
 
 if [ "$1" = 'arangod' ]; then
-    mkdir -p /var/lib/arangodb3
-    mkdir -p /var/lib/arangodb3-apps
-    
-    # by doing this here we explicitly break support for mounting volumes from the mac (at least for docker pre 1.11)
-    # but otherwise there will be too many problems like this https://github.com/arangodb/arangodb-docker/issues/23
-    # mysql as well as postgres are doing it exactly like this so stick to this
-    chown -R arangodb /var/lib/arangodb3
-    chown -R arangodb /var/lib/arangodb3-apps
+    # /var/lib/arangodb3 and /var/lib/arangodb3-apps must exist and
+    # be writable by the user under which we run the container.
+
+    # Make a copy of the configuration file to patch it, note that this
+    # must work regardless under which user we run:
+    cp /etc/arangodb3/arangod.conf /tmp/arangod.conf
 
     if [ ! -z "$ARANGO_ENCRYPTION_KEYFILE" ]; then
         echo "Using encrypted database"
-        sed -i /etc/arangodb3/arangod.conf -e "s;^.*encryption-keyfile.*;encryption-keyfile=$ARANGO_ENCRYPTION_KEYFILE;"
+        sed -i /tmp/arangod.conf -e "s;^.*encryption-keyfile.*;encryption-keyfile=$ARANGO_ENCRYPTION_KEYFILE;"
         ARANGO_STORAGE_ENGINE=rocksdb
     fi
 
     if [ "$ARANGO_STORAGE_ENGINE" == "rocksdb" ]; then
         echo "choosing Rocksdb storage engine"
-        sed -i /etc/arangodb3/arangod.conf -e "s;storage-engine = auto;storage-engine = rocksdb;"
+        sed -i /tmp/arangod.conf -e "s;storage-engine = auto;storage-engine = rocksdb;"
     elif [ "$ARANGO_STORAGE_ENGINE" == "mmfiles" ]; then
         echo "choosing MMFiles storage engine"
-        sed -i /etc/arangodb3/arangod.conf -e "s;storage-engine = auto;storage-engine = mmfiles;"
+        sed -i /tmp/arangod.conf -e "s;storage-engine = auto;storage-engine = mmfiles;"
     else
-        echo "automaticaly choosing storage engine"
+        echo "automatically choosing storage engine"
     fi
     if [ ! -f /var/lib/arangodb3/SERVER ] && [ "$SKIP_DATABASE_INIT" != "1" ]; then
         if [ -f "$ARANGO_ROOT_PASSWORD_FILE" ]; then
             ARANGO_ROOT_PASSWORD="$(cat $ARANGO_ROOT_PASSWORD_FILE)"
         fi
-        if [ -z "$ARANGO_ROOT_PASSWORD" ] && [ -z "$ARANGO_NO_AUTH" ] && [ -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
+        if [ -z "${ARANGO_ROOT_PASSWORD+x}" ] && [ -z "$ARANGO_NO_AUTH" ] && [ -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
             echo >&2 'error: database is uninitialized and password option is not specified '
             echo >&2 "  You need to specify one of ARANGO_ROOT_PASSWORD, ARANGO_NO_AUTH and ARANGO_RANDOM_ROOT_PASSWORD"
             exit 1
@@ -51,18 +49,22 @@ if [ "$1" = 'arangod' ]; then
             echo "==========================================="
         fi
         
-	    if [ ! -z "$ARANGO_ROOT_PASSWORD" ]; then
+        if [ ! -z "${ARANGO_ROOT_PASSWORD+x}" ]; then
             echo "Initializing root user...Hang on..."
             ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database || true
             export ARANGO_ROOT_PASSWORD
-            ARANGOSH_ARGS=" --server.password ${ARANGO_ROOT_PASSWORD} "
+        
+            if [ ! -z "${ARANGO_ROOT_PASSWORD}" ]; then
+                ARANGOSH_ARGS=" --server.password ${ARANGO_ROOT_PASSWORD} "
+            fi
         else
             ARANGOSH_ARGS=" --server.authentication false"
         fi
 
         echo "Initializing database...Hang on..."
 
-        arangod --server.endpoint unix:///tmp/arangodb-tmp.sock \
+        arangod --config /tmp/arangod.conf \
+                --server.endpoint unix:///tmp/arangodb-tmp.sock \
                 --server.authentication false \
 		--log.file /tmp/init-log \
 		--log.foreground-tty false &
@@ -137,7 +139,7 @@ if [ "$1" = 'arangod' ]; then
 	    AUTHENTICATION="false"
     fi
 
-    set -- arangod --server.authentication="$AUTHENTICATION" "$@"
+    set -- arangod "$@" --server.authentication="$AUTHENTICATION" --config /tmp/arangod.conf
 fi
 
 exec "$@"
