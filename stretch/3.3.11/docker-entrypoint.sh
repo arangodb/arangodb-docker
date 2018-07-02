@@ -16,6 +16,7 @@ if [ "$1" = 'arangod' ]; then
     # Make a copy of the configuration file to patch it, note that this
     # must work regardless under which user we run:
     cp /etc/arangodb3/arangod.conf /tmp/arangod.conf
+    cp /etc/arangodb3/arango-init-database.conf /tmp/arango-init-database.conf
 
     if [ ! -z "$ARANGO_ENCRYPTION_KEYFILE" ]; then
         echo "Using encrypted database"
@@ -51,7 +52,7 @@ if [ "$1" = 'arangod' ]; then
         
         if [ ! -z "${ARANGO_ROOT_PASSWORD}" ]; then
             echo "Initializing root user...Hang on..."
-            ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database -c /tmp/arangod.conf || true
+            ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database -c /tmp/arango-init-database.conf || true
             export ARANGO_ROOT_PASSWORD
         
             if [ ! -z "${ARANGO_ROOT_PASSWORD}" ]; then
