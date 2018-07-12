@@ -115,6 +115,8 @@ if [ "$1" = 'arangod' ]; then
 	fi
 
         echo "Database initialized...Starting System..."
+    else
+        echo "starting over with existing database"
     fi
 
     # if we really want to start arangod and not bash or any other thing
