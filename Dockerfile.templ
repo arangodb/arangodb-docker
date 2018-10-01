@@ -16,6 +16,7 @@ RUN apt-get update && \
         ca-certificates \
         pwgen \
         wget \
+        numactl \
     && \
     rm -rf /var/lib/apt/lists/* && \
     wget ${ARANGO_SIGNATURE_URL} &&       \
