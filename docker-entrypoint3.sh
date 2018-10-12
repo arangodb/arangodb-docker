@@ -133,18 +133,14 @@ fi
 
 if [ ! -z "$ARANGO_USE_NUMA_INTERLEAVE_ALL" ]; then
     echo "Will try to enable NUMA interleave on all nodes..."
-    set +e
     # check numactl usability to provide a hint if container is not running in
     # privileged mode
     numa='numactl --interleave=all'
-    $numa sleep 0
-    if [ $? -ne 0 ]
-        then
-        echo >&2 "error: cannot use numactl, if you are sure that it is supported by your hardware and system, please check that container is running in privileged mode or use docker --security-opt seccomp=unconfined"
+    if $numa true &> /dev/null; then
+	set -- $numa "$@"
     else
-        set -- $numa "$@"
+	echo >&2 "error: cannot use numactl, if you are sure that it is supported by your hardware and system, please check that container is running with --security-opt seccomp=unconfined"
     fi
-    set -e
 fi
 
 exec "$@"
