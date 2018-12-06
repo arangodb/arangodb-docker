@@ -2,12 +2,12 @@ FROM debian:stretch
 MAINTAINER Frank Celler <info@arangodb.com>
 
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         libjemalloc1 \
         ca-certificates \
         pwgen \
-        curl \
-    && \
+        curl && \
     rm -rf /var/lib/apt/lists/*
 
 COPY arangodb.deb /arangodb.deb
