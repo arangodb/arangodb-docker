@@ -30,8 +30,8 @@ RUN cd /tmp                                && \
         -e 's!^(file\s*=).*!\1 -!' \
         -e 's!^\s*uid\s*=.*!!' \
         /etc/arangodb3/arangod.conf        && \
-    echo chgrp 0 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
-    echo chmod 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
+    echo chgrp -R 0 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
+    echo chmod -R 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
     rm -f ${ARANGO_PACKAGE}* data.tar.gz
 # Note that Openshift runs containers by default with a random UID and GID 0.
 # We need that the database and apps directory are writable for this config.

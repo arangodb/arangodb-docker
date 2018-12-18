@@ -44,8 +44,8 @@ RUN curl --fail -O ${ARANGO_SIGNATURE_URL} &&       \
         -e 's!^(file\s*=).*!\1 -!' \
         -e 's!^\s*uid\s*=.*!!' \
         /etc/arangodb3/arangod.conf \
-    && chgrp 0 /var/lib/arangodb3 /var/lib/arangodb3-apps \
-    && chmod 775 /var/lib/arangodb3 /var/lib/arangodb3-apps \
+    && chgrp -R 0 /var/lib/arangodb3 /var/lib/arangodb3-apps \
+    && chmod -R 775 /var/lib/arangodb3 /var/lib/arangodb3-apps \
     && \
     rm -f ${ARANGO_PACKAGE}*
 # Note that Openshift runs containers by default with a random UID and GID 0.
