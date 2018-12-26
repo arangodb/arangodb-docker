@@ -10,21 +10,32 @@ ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARCHITECTURE}/${ARANGO_PACKAGE}
 ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
 
 RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends gpg dirmngr && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+        dirmngr \
+        gpg \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN gpg --keyserver hkps://hkps.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B
 
+# need at least
+#   openssl to >= 1.1.0j-1~deb9u1
+#   sensible-utils to >= 0.0.9+deb9u1
+#   curl to >= 7.52.1-5+deb9u8
+#   libgcrypt20 to >= 1.7.6-2+deb9u3
+#   libtasn1-6 to >= 4.10-1.1+deb9u1
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        libjemalloc1 \
         ca-certificates \
-        pwgen \
         curl \
+        curl \
+        libjemalloc1 \
+        libtasn1-6 \
         numactl \
-    && \
-    rm -rf /var/lib/apt/lists/*
+        openssl \
+        pwgen \
+        sensible-utils \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /docker-entrypoint-initdb.d
 
