@@ -1,7 +1,7 @@
 FROM alpine:3.8
 MAINTAINER Frank Celler <info@arangodb.com>
 
-ENV ARANGO_VERSION @VERSION@
+ENV ARANGO_VERSION 3.4.5
 ENV ARANGO_URL https://download.arangodb.com/arangodb34/DEBIAN/amd64
 ENV ARANGO_PACKAGE arangodb3_${ARANGO_VERSION}-1_amd64.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARANGO_PACKAGE}
@@ -33,16 +33,20 @@ RUN cd /tmp                                && \
     echo chgrp 0 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
     echo chmod 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
     rm -f /usr/bin/foxx && \
-    rm -f ${ARANGO_PACKAGE}* data.tar.gz
+    wget http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/numactl-2.0.12-r2.apk && \
+    wget http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/numactl-tools-2.0.12-r2.apk && \
+    apk add ./numactl-2.0.12-r2.apk && \
+    apk add ./numactl-tools-2.0.12-r2.apk && \
+    rm -f ${ARANGO_PACKAGE}* data.tar.gz numactl-2.0.12-r2.apk numactl-tools-2.0.12-r2.apk
 # Note that Openshift runs containers by default with a random UID and GID 0.
 # We need that the database and apps directory are writable for this config.
 
 # retain the database directory and the Foxx Application directory
 VOLUME ["/var/lib/arangodb3", "/var/lib/arangodb3-apps"]
 
-COPY docker-foxx.sh /usr/bin/foxx
 COPY docker-entrypoint.sh /entrypoint.sh
-RUN ["chmod", "+x", "/entrypoint.sh"]
+copy docker-foxx.sh /usr/bin/foxx
+
 ENTRYPOINT ["/entrypoint.sh"]
 
 # standard port

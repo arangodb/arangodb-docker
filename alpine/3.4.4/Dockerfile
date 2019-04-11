@@ -1,7 +1,7 @@
 FROM alpine:3.8
 MAINTAINER Frank Celler <info@arangodb.com>
 
-ENV ARANGO_VERSION @VERSION@
+ENV ARANGO_VERSION 3.4.4
 ENV ARANGO_URL https://download.arangodb.com/arangodb34/DEBIAN/amd64
 ENV ARANGO_PACKAGE arangodb3_${ARANGO_VERSION}-1_amd64.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARANGO_PACKAGE}
@@ -40,9 +40,9 @@ RUN cd /tmp                                && \
 # retain the database directory and the Foxx Application directory
 VOLUME ["/var/lib/arangodb3", "/var/lib/arangodb3-apps"]
 
-COPY docker-foxx.sh /usr/bin/foxx
 COPY docker-entrypoint.sh /entrypoint.sh
-RUN ["chmod", "+x", "/entrypoint.sh"]
+copy docker-foxx.sh /usr/bin/foxx
+
 ENTRYPOINT ["/entrypoint.sh"]
 
 # standard port
