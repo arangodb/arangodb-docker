@@ -34,8 +34,10 @@ RUN cd /tmp                                && \
     echo chmod 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
     rm -f /usr/bin/foxx && \
     wget http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/numactl-2.0.12-r2.apk && \
-    wget http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/numactl-tools-2.0.12-r2.apk && \
+    echo "5d6169428e3b8a5d0feda9948a199e9eb676b9a10961f643141f0e462eff38f1  numactl-2.0.12-r2.apk" | sha256sum -c && \
     apk add ./numactl-2.0.12-r2.apk && \
+    wget http://dl-cdn.alpinelinux.org/alpine/edge/main/x86_64/numactl-tools-2.0.12-r2.apk && \
+    echo "c758d0ea59a50e2d130ae5df1c35c77da935521ac2649183abde16a6bb1fa4d5  numactl-tools-2.0.12-r2.apk" | sha256sum -c && \
     apk add ./numactl-tools-2.0.12-r2.apk && \
     rm -f ${ARANGO_PACKAGE}* data.tar.gz numactl-2.0.12-r2.apk numactl-tools-2.0.12-r2.apk
 # Note that Openshift runs containers by default with a random UID and GID 0.
