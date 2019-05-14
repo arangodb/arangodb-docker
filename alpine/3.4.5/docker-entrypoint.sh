@@ -28,7 +28,7 @@ if [ -d /sys/devices/system/node/node1 -a -f /proc/self/numa_maps ]; then
         if $NUMACTL echo > /dev/null 2>&1; then
             echo "using NUMA $NUMACTL"
         else
-            echo "cannot start with NUMA $NUMACTL: please ensure that docker is running with --privileged"
+            echo "cannot start with NUMA $NUMACTL: please ensure that docker is running with --cap-add SYS_NICE"
             NUMACTL=""
         fi
     fi
