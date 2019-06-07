@@ -1,7 +1,7 @@
 FROM alpine:3.8
 MAINTAINER Frank Celler <info@arangodb.com>
 
-ENV ARANGO_VERSION 3.4.6
+ENV ARANGO_VERSION 3.4.6.1
 ENV ARANGO_URL https://download.arangodb.com/arangodb34/DEBIAN/amd64
 ENV ARANGO_PACKAGE arangodb3_${ARANGO_VERSION}-1_amd64.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARANGO_PACKAGE}
