@@ -7,19 +7,16 @@ ENV ARANGO_PACKAGE arangodb3_${ARANGO_VERSION}-1_amd64.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARANGO_PACKAGE}
 ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
 
-RUN apk add --no-cache gnupg pwgen nodejs npm binutils numactl && \
-    npm install -g foxx-cli && \
-    rm -rf /root/.npm
-
-RUN gpg --batch --keyserver hkps://hkps.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B
-
-RUN mkdir /docker-entrypoint-initdb.d
-
 # see
 #   https://docs.arangodb.com/latest/Manual/Administration/Configuration/Endpoint.html
 #   https://docs.arangodb.com/latest/Manual/Administration/Configuration/Logging.html
 
-RUN cd /tmp                                && \
+RUN apk add --no-cache gnupg pwgen nodejs npm binutils numactl && \
+    npm install -g foxx-cli && \
+    rm -rf /root/.npm && \
+    gpg --batch --keyserver hkps://hkps.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B && \
+    mkdir /docker-entrypoint-initdb.d && \
+    cd /tmp                                && \
     wget ${ARANGO_SIGNATURE_URL}           && \
     wget ${ARANGO_PACKAGE_URL}             && \
     gpg --verify ${ARANGO_PACKAGE}.asc     && \
