@@ -1,6 +1,66 @@
 #!/bin/sh
 set -e
 
+## Update conf from generic env vars
+## env vars syntax:
+##  ARANGOCONF_SECTION_PARAMETER=VALUE
+## example:
+##  ARANGOCONF_LOG_LEVEL=debug
+##   => update [log] section with "level = debug"
+updateconf() {
+  tmpconfdir=/tmp/arangoconf
+  conffile=/tmp/arangod.conf
+
+  # first section has no name. Will be id 0, name "header"
+  currentfile=header
+  currentnumber=0
+
+  mkdir -p "$tmpconfdir"
+  rm "$tmpconfdir"/[0-9]* 2>/dev/null || true
+
+  ## Split config file per section
+  while read -r line; do
+      if echo "$line" | grep -q -e '^\[.*\]'; then
+          currentfile="$(echo "$line" | sed -n 's/.*\[\(.*\)\]/\1/p')"
+          currentnumber=$((currentnumber+1))
+      fi
+      echo "$line" >> "$(printf "%s/%02d-%s" "$tmpconfdir" "$currentnumber" "$currentfile")"
+  done < "$conffile"
+
+  ## cycle through all ARANGOCONF* var / value pairs
+  awk 'BEGIN{for(v in ENVIRON) print tolower(v) " " ENVIRON[v]}' \
+    | grep -e '^arangoconf' \
+    | while read -r var value; do
+
+        ## Extract section name and parameter name from var name.
+        # :: In POSIX sh, process substitution is undefined. In bash we would do:
+        # :: $ read -r section param < <(echo "$var" | sed -n 's/ARANGOCONF_\([^_]*\)_\(.*\)/\1 \2/p')
+        # :: so let's split it in 2 separate parsings
+        section=$(echo "$var" | sed -n 's/arangoconf_\([^_]*\)_\(.*\)/\1/p')
+        param=$(echo "$var" | sed -n 's/arangoconf_\([^_]*\)_\(.*\)/\2/p')
+
+        # :: array not available in POSIX sh - let's hope sections are never duplicate
+        file="$(ls "$tmpconfdir"/[0-9][0-9]-"$section" 2>/dev/null || true)"
+
+        if [ ! -f "$file" ]; then # section (file) not yet existing
+          file="$tmpconfdir"/99-"$section"
+          echo "[$section]" >> "$file"
+          echo "$param = $value" >> "$file"
+
+        else # section already existing
+          if grep -qe "^$param = " "$file"; then # parameter already existing - replace
+            sed -i 's/^'"$param"' = .*/'"$param"' = '"$value"'/g' "$file"
+          else # parameter not yet existing - just add
+            echo "$param = $value" >> "$file"
+          fi
+        fi
+
+      done
+
+  ## Generate a new config file from updated section files
+  cat "$tmpconfdir"/[0-9][0-9]-* > "$conffile"
+}
+
 if [ -z "$ARANGO_INIT_PORT" ] ; then
     ARANGO_INIT_PORT=8999
 fi
@@ -42,6 +102,8 @@ if [ "$1" = 'arangod' ]; then
     # must work regardless under which user we run:
     cp /etc/arangodb3/arangod.conf /tmp/arangod.conf
 
+    updateconf
+
     if [ ! -z "$ARANGO_ENCRYPTION_KEYFILE" ]; then
         echo "Using encrypted database"
         sed -i /tmp/arangod.conf -e "s;^.*encryption-keyfile.*;encryption-keyfile=$ARANGO_ENCRYPTION_KEYFILE;"
@@ -73,19 +135,19 @@ if [ "$1" = 'arangod' ]; then
             echo >&2 "  You need to specify one of ARANGO_ROOT_PASSWORD, ARANGO_ROOT_PASSWORD_FILE, ARANGO_NO_AUTH and ARANGO_RANDOM_ROOT_PASSWORD"
             exit 1
         fi
-        
+
         if [ ! -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
             ARANGO_ROOT_PASSWORD=$(pwgen -s -1 16)
             echo "==========================================="
             echo "GENERATED ROOT PASSWORD: $ARANGO_ROOT_PASSWORD"
             echo "==========================================="
         fi
-        
+
         if [ ! -z "${ARANGO_ROOT_PASSWORD+x}" ]; then
             echo "Initializing root user...Hang on..."
             ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database -c /tmp/arangod.conf --server.rest-server false --log.level error --database.init-database true || true
             export ARANGO_ROOT_PASSWORD
-        
+
             if [ ! -z "${ARANGO_ROOT_PASSWORD}" ]; then
                 ARANGOSH_ARGS=" --server.password ${ARANGO_ROOT_PASSWORD} "
             fi
