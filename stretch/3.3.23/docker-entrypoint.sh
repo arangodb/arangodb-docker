@@ -1,18 +1,13 @@
-#!/bin/sh
-set -e
-
-if [ -z "$ARANGO_INIT_PORT" ] ; then
-    export ARANGO_INIT_PORT=8999
-fi
+#!/bin/bash
+set -eo pipefail
 
 AUTHENTICATION="true"
 export GLIBCXX_FORCE_NEW=1
 
 # if command starts with an option, prepend arangod
-case "$1" in
-  -*) set -- arangod "$@" ;;
-  *) ;;
-esac
+if [ "${1:0:1}" = '-' ]; then
+    set -- arangod "$@"
+fi
 
 if [ "$1" = 'arangod' ]; then
     # /var/lib/arangodb3 and /var/lib/arangodb3-apps must exist and
@@ -21,6 +16,7 @@ if [ "$1" = 'arangod' ]; then
     # Make a copy of the configuration file to patch it, note that this
     # must work regardless under which user we run:
     cp /etc/arangodb3/arangod.conf /tmp/arangod.conf
+    cp /etc/arangodb3/arango-init-database.conf /tmp/arango-init-database.conf
 
     if [ ! -z "$ARANGO_ENCRYPTION_KEYFILE" ]; then
         echo "Using encrypted database"
@@ -29,7 +25,7 @@ if [ "$1" = 'arangod' ]; then
     fi
 
     if [ "$ARANGO_STORAGE_ENGINE" == "rocksdb" ]; then
-        echo "choosing RocksDB storage engine"
+        echo "choosing Rocksdb storage engine"
         sed -i /tmp/arangod.conf -e "s;storage-engine = auto;storage-engine = rocksdb;"
     elif [ "$ARANGO_STORAGE_ENGINE" == "mmfiles" ]; then
         echo "choosing MMFiles storage engine"
@@ -41,9 +37,6 @@ if [ "$1" = 'arangod' ]; then
         if [ -f "$ARANGO_ROOT_PASSWORD_FILE" ]; then
             ARANGO_ROOT_PASSWORD="$(cat $ARANGO_ROOT_PASSWORD_FILE)"
         fi
-        # Please note that the +x in the following line is for the case
-        # that ARANGO_ROOT_PASSWORD is set but to an empty value, please
-        # do not remove!
         if [ -z "${ARANGO_ROOT_PASSWORD+x}" ] && [ -z "$ARANGO_NO_AUTH" ] && [ -z "$ARANGO_RANDOM_ROOT_PASSWORD" ]; then
             echo >&2 'error: database is uninitialized and password option is not specified '
             echo >&2 "  You need to specify one of ARANGO_ROOT_PASSWORD, ARANGO_NO_AUTH and ARANGO_RANDOM_ROOT_PASSWORD"
@@ -59,7 +52,7 @@ if [ "$1" = 'arangod' ]; then
         
         if [ ! -z "${ARANGO_ROOT_PASSWORD+x}" ]; then
             echo "Initializing root user...Hang on..."
-            ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database -c /tmp/arangod.conf --server.rest-server false --log.level error --database.init-database true || true
+            ARANGODB_DEFAULT_ROOT_PASSWORD="$ARANGO_ROOT_PASSWORD" /usr/sbin/arango-init-database -c /tmp/arango-init-database.conf || true
             export ARANGO_ROOT_PASSWORD
         
             if [ ! -z "${ARANGO_ROOT_PASSWORD}" ]; then
@@ -72,7 +65,7 @@ if [ "$1" = 'arangod' ]; then
         echo "Initializing database...Hang on..."
 
         arangod --config /tmp/arangod.conf \
-                --server.endpoint tcp://127.0.0.1:$ARANGO_INIT_PORT \
+                --server.endpoint unix:///tmp/arangodb-tmp.sock \
                 --server.authentication false \
 		--log.file /tmp/init-log \
 		--log.foreground-tty false &
@@ -94,7 +87,7 @@ if [ "$1" = 'arangod' ]; then
             let counter=counter+1
             ARANGO_UP=1
                 arangosh \
-                    --server.endpoint=tcp://127.0.0.1:$ARANGO_INIT_PORT \
+                    --server.endpoint=unix:///tmp/arangodb-tmp.sock \
                     --server.authentication false \
                     --javascript.execute-string "db._version()" \
                     > /dev/null 2>&1 || ARANGO_UP=0
@@ -109,7 +102,7 @@ if [ "$1" = 'arangod' ]; then
             *.js)
                         echo "$0: running $f"
                         arangosh ${ARANGOSH_ARGS} \
-                                --server.endpoint=tcp://127.0.0.1:$ARANGO_INIT_PORT \
+                                --server.endpoint=unix:///tmp/arangodb-tmp.sock \
                                 --javascript.execute "$f"
                         ;;
             */dumps)
@@ -119,7 +112,7 @@ if [ "$1" = 'arangod' ]; then
                             echo "restoring $d into ${DBName}";
                             arangorestore \
                                 ${ARANGOSH_ARGS} \
-                                --server.endpoint=tcp://127.0.0.1:$ARANGO_INIT_PORT \
+                                --server.endpoint=unix:///tmp/arangodb-tmp.sock \
                                 --create-database true \
                                 --include-system-collections true \
                                 --server.database "$DBName" \
@@ -136,6 +129,8 @@ if [ "$1" = 'arangod' ]; then
         fi
 
         echo "Database initialized...Starting System..."
+    else
+        echo "starting over with existing database"
     fi
 
     # if we really want to start arangod and not bash or any other thing
@@ -148,6 +143,18 @@ if [ "$1" = 'arangod' ]; then
     fi
 
     set -- arangod "$@" --server.authentication="$AUTHENTICATION" --config /tmp/arangod.conf
+fi
+
+if [ ! -z "$ARANGO_USE_NUMA_INTERLEAVE_ALL" ]; then
+    echo "Will try to enable NUMA interleave on all nodes..."
+    # check numactl usability to provide a hint if container is not running in
+    # privileged mode
+    numa='numactl --interleave=all'
+    if $numa true &> /dev/null; then
+	set -- $numa "$@"
+    else
+	echo >&2 "error: cannot use numactl, if you are sure that it is supported by your hardware and system, please check that container is running with --security-opt seccomp=unconfined"
+    fi
 fi
 
 exec "$@"

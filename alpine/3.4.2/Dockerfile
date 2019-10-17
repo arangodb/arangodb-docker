@@ -1,7 +1,7 @@
 FROM alpine:3.8
 MAINTAINER Frank Celler <info@arangodb.com>
 
-ENV ARANGO_VERSION @VERSION@
+ENV ARANGO_VERSION 3.4.2.1
 ENV ARANGO_URL https://download.arangodb.com/arangodb34/DEBIAN/amd64
 ENV ARANGO_PACKAGE arangodb3_${ARANGO_VERSION}-1_amd64.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARANGO_PACKAGE}
@@ -27,12 +27,11 @@ RUN cd /tmp                                && \
     tar -C / -x -z -f data.tar.gz          && \
     sed -ri \
         -e 's!127\.0\.0\.1!0.0.0.0!g' \
-        -e 's!^(file\s*=\s*).*!\1 -!' \
+        -e 's!^(file\s*=).*!\1 -!' \
         -e 's!^\s*uid\s*=.*!!' \
         /etc/arangodb3/arangod.conf        && \
-    echo chgrp -R 0 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
-    echo chmod -R 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
-    rm -f /usr/bin/foxx && \
+    echo chgrp 0 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
+    echo chmod 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
     rm -f ${ARANGO_PACKAGE}* data.tar.gz
 # Note that Openshift runs containers by default with a random UID and GID 0.
 # We need that the database and apps directory are writable for this config.
@@ -40,9 +39,8 @@ RUN cd /tmp                                && \
 # retain the database directory and the Foxx Application directory
 VOLUME ["/var/lib/arangodb3", "/var/lib/arangodb3-apps"]
 
-COPY docker-foxx.sh /usr/bin/foxx
 COPY docker-entrypoint.sh /entrypoint.sh
-RUN ["chmod", "+x", "/entrypoint.sh"]
+
 ENTRYPOINT ["/entrypoint.sh"]
 
 # standard port

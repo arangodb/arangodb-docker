@@ -36,7 +36,7 @@ RUN (echo arangodb3 arangodb3/password password test | debconf-set-selections) &
 VOLUME ["/var/lib/arangodb3", "/var/lib/arangodb3-apps"]
 
 COPY docker-entrypoint32.sh /entrypoint.sh
-
+RUN ["chmod", "+x", "/entrypoint.sh"]
 ENTRYPOINT ["/entrypoint.sh"]
 
 # standard port
