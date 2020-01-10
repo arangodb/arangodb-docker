@@ -10,7 +10,7 @@ To build your own ArangoDB image pick the template file from the corrosponding d
 Use the arangodb major/minor version you want to build (i.e. 36 is intended to be used with ArangoDB 3.6.x):
 
 ```console
-cp ../oskar/containers/arangodb[version]/Dockerfile Dockerfile
+cp ../oskar/containers/arangodb[version]/* .
 ```
 
 Adjust @VERSION@ in the Dockerfile to the version of arangodb you want to have and issue:
