@@ -12,7 +12,7 @@ ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
 #   https://www.arangodb.com/docs/3.5/programs-arangod-log.html
 
 RUN apk add --no-cache gnupg pwgen nodejs npm binutils numactl numactl-tools && \
-    npm install -g foxx-cli && \
+    npm install -g foxx-cli@1.3.0 && \
     rm -rf /root/.npm && \
     gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B && \
     mkdir /docker-entrypoint-initdb.d && \

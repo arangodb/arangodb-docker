@@ -1,19 +1,20 @@
 FROM alpine:3.10
 MAINTAINER Frank Celler <info@arangodb.com>
 
-ENV ARANGO_VERSION 3.4.10
-ENV ARANGO_URL https://download.arangodb.com/arangodb34/DEBIAN/amd64
+ENV ARANGO_VERSION 3.6.5
+ENV ARANGO_URL https://download.arangodb.com/arangodb36/DEBIAN/amd64
 ENV ARANGO_PACKAGE arangodb3_${ARANGO_VERSION}-1_amd64.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARANGO_PACKAGE}
 ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
 
 # see
-#   https://www.arangodb.com/docs/3.4/programs-arangod-server.html#managing-endpoints
-#   https://www.arangodb.com/docs/3.4/programs-arangod-log.html
+#   https://www.arangodb.com/docs/3.6/programs-arangod-server.html#managing-endpoints
+#   https://www.arangodb.com/docs/3.6/programs-arangod-log.html
 
-RUN apk add --no-cache gnupg pwgen nodejs npm binutils numactl && \
-    npm install -g foxx-cli@1.3.0 && \
-    rm -rf /root/.npm && \
+RUN apk add --no-cache gnupg pwgen binutils numactl numactl-tools && \
+    apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.11/main/ nodejs npm && \
+    npm install -g foxx-cli && \
+    rm -rf /root/.npm && apk del npm && \
     gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B && \
     mkdir /docker-entrypoint-initdb.d && \
     cd /tmp                                && \
@@ -27,8 +28,8 @@ RUN apk add --no-cache gnupg pwgen nodejs npm binutils numactl && \
         -e 's!^(file\s*=\s*).*!\1 -!' \
         -e 's!^\s*uid\s*=.*!!' \
         /etc/arangodb3/arangod.conf        && \
-    echo chgrp 0 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
-    echo chmod 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
+    echo chgrp -R 0 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
+    echo chmod -R 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
     rm -f /usr/bin/foxx && \
     rm -f ${ARANGO_PACKAGE}* data.tar.gz && \
     apk del gnupg
@@ -39,7 +40,7 @@ RUN apk add --no-cache gnupg pwgen nodejs npm binutils numactl && \
 VOLUME ["/var/lib/arangodb3", "/var/lib/arangodb3-apps"]
 
 COPY docker-entrypoint.sh /entrypoint.sh
-copy docker-foxx.sh /usr/bin/foxx
+COPY docker-foxx.sh /usr/bin/foxx
 
 ENTRYPOINT ["/entrypoint.sh"]
 
