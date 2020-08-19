@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM alpine:3.11
 MAINTAINER Frank Celler <info@arangodb.com>
 
 ENV ARANGO_VERSION 3.5.5.1
@@ -11,9 +11,9 @@ ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
 #   https://www.arangodb.com/docs/3.5/programs-arangod-server.html#managing-endpoints
 #   https://www.arangodb.com/docs/3.5/programs-arangod-log.html
 
-RUN apk add --no-cache gnupg pwgen nodejs npm binutils numactl numactl-tools && \
-    npm install -g foxx-cli@1.3.0 && \
-    rm -rf /root/.npm && \
+RUN apk add --no-cache gnupg pwgen binutils numactl numactl-tools nodejs yarn && \
+    yarn global add foxx-cli && \
+    apk del yarn && \
     gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys CD8CB0F1E0AD5B52E93F41E7EA93F5E56E751E9B && \
     mkdir /docker-entrypoint-initdb.d && \
     cd /tmp                                && \

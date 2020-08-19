@@ -1,15 +1,15 @@
 FROM alpine:3.11
 MAINTAINER Frank Celler <info@arangodb.com>
 
-ENV ARANGO_VERSION 3.6.5
-ENV ARANGO_URL https://download.arangodb.com/arangodb36/DEBIAN/amd64
+ENV ARANGO_VERSION 3.7.1
+ENV ARANGO_URL https://download.arangodb.com/arangodb37/DEBIAN/amd64
 ENV ARANGO_PACKAGE arangodb3_${ARANGO_VERSION}-1_amd64.deb
 ENV ARANGO_PACKAGE_URL ${ARANGO_URL}/${ARANGO_PACKAGE}
 ENV ARANGO_SIGNATURE_URL ${ARANGO_PACKAGE_URL}.asc
 
 # see
-#   https://www.arangodb.com/docs/3.6/programs-arangod-server.html#managing-endpoints
-#   https://www.arangodb.com/docs/3.6/programs-arangod-log.html
+#   https://www.arangodb.com/docs/3.7/programs-arangod-server.html#managing-endpoints
+#   https://www.arangodb.com/docs/3.7/programs-arangod-log.html
 
 RUN apk add --no-cache gnupg pwgen binutils numactl numactl-tools nodejs yarn && \
     yarn global add foxx-cli && \
