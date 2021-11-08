@@ -27,8 +27,8 @@ RUN apk add --no-cache gnupg pwgen binutils numactl numactl-tools nodejs yarn &&
         -e 's!^(file\s*=\s*).*!\1 -!' \
         -e 's!^\s*uid\s*=.*!!' \
         /etc/arangodb3/arangod.conf        && \
-    echo chgrp -R 0 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
-    echo chmod -R 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
+    chgrp -R 0 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
+    chmod -R 775 /var/lib/arangodb3 /var/lib/arangodb3-apps && \
     rm -f /usr/bin/foxx && \
     rm -f ${ARANGO_PACKAGE}* data.tar.gz && \
     apk del gnupg
