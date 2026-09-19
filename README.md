@@ -1,6 +1,4 @@
 
-[![dockeri.co](http://dockeri.co/image/_/arangodb)](https://registry.hub.docker.com/_/arangodb/)
-
 # Building your own ArangoDB image
 
 We are auto generating docker images via our [build system](https://github.com/arangodb/oskar/tree/master/containers) where you can find the Dockerfile templates.
