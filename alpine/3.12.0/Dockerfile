@@ -1,4 +1,4 @@
-FROM alpine:3.17
+FROM alpine:3.19.1
 MAINTAINER Frank Celler <info@arangodb.com>
 
 ENV ARANGO_VERSION 3.12.0
